@@ -260,13 +260,14 @@ early_stopping = pl.callbacks.EarlyStopping(
 trainer = Trainer(
     max_epochs=200,
     callbacks=[ckpt_callback, early_stopping],
-    auto_select_gpus=True if torch.cuda.is_available() else False,
     weights_summary='full',
     progress_bar_refresh_rate=10,
     profiler='simple',
     accumulate_grad_batches=1,
     default_root_dir=file_dir,
 
+    devices='gpu' if torch.cuda.is_available() else 'cpu',
+    auto_select_gpus=True if torch.cuda.is_available() else False,
 )
 
 trainer.fit(
