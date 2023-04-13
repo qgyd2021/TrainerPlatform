@@ -30,8 +30,6 @@ test_output_filename=test_output.xlsx
 
 work_dir="$(pwd)"
 file_dir="$(pwd)"
-pretrained_models_dir="${work_dir}/../../pretrained";
-final_model_dir="${work_dir}/../../models/${final_model_name}";
 
 
 # parse options
@@ -62,6 +60,10 @@ while true; do
     *) break;
   esac
 done
+
+pretrained_models_dir="${work_dir}/../../pretrained";
+final_model_dir="${work_dir}/../../models/${final_model_name}";
+
 
 $verbose && echo "system_version: ${system_version}"
 
