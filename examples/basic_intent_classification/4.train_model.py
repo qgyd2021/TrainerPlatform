@@ -266,7 +266,8 @@ trainer = Trainer(
     accumulate_grad_batches=1,
     default_root_dir=file_dir,
 
-    devices='gpu' if torch.cuda.is_available() else 'cpu',
+    accelerator='gpu' if torch.cuda.is_available() else 'cpu',
+    devices='gpus' if torch.cuda.is_available() else 'num_processes',
     auto_select_gpus=True if torch.cuda.is_available() else False,
 )
 
