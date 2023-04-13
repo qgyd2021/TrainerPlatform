@@ -61,8 +61,8 @@ while true; do
   esac
 done
 
-pretrained_models_dir="${work_dir}/../../pretrained";
-final_model_dir="${work_dir}/../../models/${final_model_name}";
+pretrained_models_dir="${work_dir}/../../pretrained_models";
+final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
 
 
 $verbose && echo "system_version: ${system_version}"

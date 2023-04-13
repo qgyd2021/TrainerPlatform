@@ -2,12 +2,11 @@
 
 .idea
 
-./datasets/
-./demo/
-./models/
-
-pretrained/
+datasets/
+demo/
+pretrained_models/
 thirdparty/
+trained_models/
 
 **/cache_dir
 **/lightning_logs
@@ -22,6 +21,7 @@ thirdparty/
 **/*.bin
 **/*.bz2
 **/*.cache
+**/*.ckpt
 **/*.conf
 **/*.csv
 **/*.db
