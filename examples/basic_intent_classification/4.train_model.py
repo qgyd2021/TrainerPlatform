@@ -270,7 +270,7 @@ trainer = Trainer(
     default_root_dir=file_dir,
 
     # https://mp.weixin.qq.com/s?__biz=MzI1MjQ2OTQ3Ng==&mid=2247561650&idx=1&sn=ea6de6d2a6e4831c735d98d37cbfd026&chksm
-    # gpus=[0] if torch.cuda.is_available() else None,
+    gpus=[0] if torch.cuda.is_available() else None,
 )
 
 trainer.fit(
