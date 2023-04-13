@@ -266,9 +266,10 @@ trainer = Trainer(
     accumulate_grad_batches=1,
     default_root_dir=file_dir,
 
-    accelerator='gpu' if torch.cuda.is_available() else 'cpu',
-    devices='gpus' if torch.cuda.is_available() else 'num_processes',
-    auto_select_gpus=True if torch.cuda.is_available() else False,
+    # https://mp.weixin.qq.com/s?__biz=MzI1MjQ2OTQ3Ng==&mid=2247561650&idx=1&sn=ea6de6d2a6e4831c735d98d37cbfd026&chksm
+    gpus=[0] if torch.cuda.is_available() else None,
+    num_nodes=1,
+
 )
 
 trainer.fit(
