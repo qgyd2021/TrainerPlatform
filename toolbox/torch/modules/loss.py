@@ -247,7 +247,7 @@ class FocalLoss(_Loss):
             probs = inputs
 
         # class_mask = inputs.data.new(batch_size, num_classes).fill_(0)
-        class_mask = torch.zeros(size=(batch_size, num_classes), dtype=inputs.dtype)
+        class_mask = torch.zeros(size=(batch_size, num_classes), dtype=inputs.dtype, device=inputs.device)
         # class_mask = Variable(class_mask)
         ids = targets.view(-1, 1)
         class_mask.scatter_(1, ids.data, 1.)
