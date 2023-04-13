@@ -200,7 +200,7 @@ def main():
 
     index_to_token = vocabulary.get_index_to_token_vocabulary(namespace='labels')
 
-    df = pd.read_excel(dataset_filename)
+    df = pd.read_excel(file_dir / dataset_filename)
 
     result = list()
     for i, row in tqdm(df.iterrows(), total=len(df)):
