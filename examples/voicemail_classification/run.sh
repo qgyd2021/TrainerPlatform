@@ -11,9 +11,10 @@ verbose=true;
 stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
+work_dir="$(pwd)"
 file_dir="$(pwd)"
 final_model_name=cnn_voicemail_tw
-final_model_dir="${file_dir}/../../models/${final_model_name}";
+final_model_dir="${work_dir}/../../models/${final_model_name}";
 
 
 # model params
@@ -91,7 +92,7 @@ function search_best_ckpt() {
 
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data"
-  cd "${file_dir}" || exit 1
+  cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
   --filename_patterns "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
   --filename_patterns "D:/programmer/asr_datasets/voicemail/886/wav_segmented/*/*.wav" \
@@ -101,7 +102,7 @@ fi
 
 if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
   $verbose && echo "stage 1: create vocabulary"
-  cd "${file_dir}" || exit 1
+  cd "${work_dir}" || exit 1
   python3 2.create_vocabulary.py
 
 fi
@@ -109,7 +110,7 @@ fi
 
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
   $verbose && echo "stage 2: train model"
-  cd "${file_dir}" || exit 1
+  cd "${work_dir}" || exit 1
   python3 3.train_model.py \
   --batch_size ${batch_size} \
   --max_epochs ${max_epochs} \
@@ -123,10 +124,11 @@ fi
 
 if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
   $verbose && echo "stage 3: test model"
-  cd "${file_dir}" || exit 1
 
   target_file=$(search_best_ckpt version_0 "${patience}");
   test target_file || exit 1;
+
+  cd "${work_dir}" || exit 1
 
   python3 4.test_model.py \
   --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
@@ -137,10 +139,11 @@ fi
 
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
   $verbose && echo "stage 4: export model"
-  cd "${file_dir}" || exit 1
 
   target_file=$(search_best_ckpt version_0 "${patience}");
   test target_file || exit 1;
+
+  cd "${work_dir}" || exit 1
 
   python3 5.export_model.py \
   --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \

@@ -29,6 +29,7 @@ final_model_name=basic_intent_jp
 test_output_filename=test_output.xlsx
 
 work_dir="$(pwd)"
+file_dir="$(pwd)"
 pretrained_models_dir="${work_dir}/../../pretrained";
 final_model_dir="${work_dir}/../../models/${final_model_name}";
 
@@ -76,7 +77,7 @@ fi
 function search_best_ckpt() {
   version="$1";
 
-  cd "${work_dir}" || exit 1
+  cd "${file_dir}" || exit 1
   last_epoch=$(ls "lightning_logs/${version}/checkpoints" | \
                grep ckpt | \
                awk -F'[=-]' '/epoch/ {print$2}' | \
@@ -132,6 +133,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data without irrelevant domain (create train.json, test.json file)"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
+  --file_dir "${file_dir}" \
   --without_irrelevant_domain \
   --dataset_filename "${dataset_filename}" \
   --do_lowercase
@@ -142,6 +144,7 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
   $verbose && echo "stage 1: create hierarchical labels dictionary (create hierarchical_labels.pkl file)"
   cd "${work_dir}" || exit 1
   python3 2.create_hierarchical_labels.py \
+  --file_dir "${file_dir}" \
   --dataset_filename "${dataset_filename}"
 fi
 
@@ -150,6 +153,7 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
   $verbose && echo "stage 2: create vocabulary (create vocabulary directory)"
   cd "${work_dir}" || exit 1
   python3 3.create_vocabulary.py \
+  --file_dir "${file_dir}" \
   --pretrained_model_dir "${pretrained_model_dir}"
 fi
 
@@ -158,6 +162,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
   $verbose && echo "stage 3: train model without irrelevant domain"
   cd "${work_dir}" || exit 1
   python3 4.train_model.py \
+  --file_dir "${file_dir}" \
   --pretrained_model_dir "${pretrained_model_dir}"
 fi
 
@@ -170,6 +175,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
   test target_file || exit 1;
 
   python3 1.prepare_data.py \
+  --file_dir "${file_dir}" \
   --dataset_filename "${dataset_filename}" \
   --do_lowercase
 fi
@@ -183,6 +189,7 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   test target_file || exit 1;
 
   python3 4.train_model.py \
+  --file_dir "${file_dir}" \
   --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
   --pretrained_model_dir "${pretrained_model_dir}"
 fi
@@ -190,12 +197,14 @@ fi
 
 if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
   $verbose && echo "stage 6: test model"
-  cd "${work_dir}" || exit 1
 
   target_file=$(search_best_ckpt version_1);
   test target_file || exit 1;
 
+  cd "${work_dir}" || exit 1
+
   python3 5.test_model.py \
+  --file_dir "${file_dir}" \
   --ckpt_path "lightning_logs/version_1/checkpoints/${target_file}" \
   --pretrained_model_dir "${pretrained_model_dir}" \
   --dataset_filename "${dataset_filename}" \
@@ -212,6 +221,7 @@ if [ ${stage} -le 7 ] && [ ${stop_stage} -ge 7 ]; then
   test target_file || exit 1;
 
   python3 6.export_model.py \
+  --file_dir "${file_dir}" \
   --ckpt_path "lightning_logs/version_1/checkpoints/${target_file}" \
   --pretrained_model_dir "${pretrained_model_dir}"
 fi
@@ -219,10 +229,11 @@ fi
 
 if [ ${stage} -le 8 ] && [ ${stop_stage} -ge 8 ]; then
   $verbose && echo "stage 8: collect files"
-  cd "${work_dir}" || exit 1
 
   target_file=$(search_best_ckpt version_1);
   test target_file || exit 1;
+
+  cd "${file_dir}" || exit 1
 
   rm -rf "${final_model_dir}" && mkdir -p "${final_model_dir}";
 

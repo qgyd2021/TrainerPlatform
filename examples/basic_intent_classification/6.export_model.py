@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import os
+from pathlib import Path
 import pickle
 import platform
 import sys
@@ -27,16 +28,10 @@ from toolbox.torchtext.models.text_classification.text_cnn import TextCNN
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--ckpt_path',
-        default=None,
-        type=str,
-    )
-    parser.add_argument(
-        '--pretrained_model_dir',
-        default=r'D:\程序员\NLP预训练模型\chinese-bert-wwm-ext',
-        type=str,
-    )
+    parser.add_argument('--file_dir', default='./', type=str)
+    parser.add_argument('--ckpt_path', default=None, type=str)
+    parser.add_argument('--pretrained_model_dir', required=True, type=str)
+
     args = parser.parse_args()
     return args
 
@@ -45,8 +40,11 @@ args = get_args()
 ckpt_path = args.ckpt_path
 pretrained_model_dir = args.pretrained_model_dir
 
+file_dir = Path(args.file_dir)
+file_dir.mkdir(exist_ok=True)
 
-vocabulary = Vocabulary.from_files('vocabulary')
+
+vocabulary = Vocabulary.from_files(file_dir / 'vocabulary')
 
 
 class CollateFunction(object):
@@ -92,7 +90,7 @@ collate_fn = CollateFunction(vocab=vocabulary, token_min_padding_length=5)
 tokenizer = PretrainedBertTokenizer(pretrained_model_dir)
 
 train_dataset = HierarchicalClassificationJsonDataset(
-    json_file='train.json',
+    json_file=file_dir / 'train.json',
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -107,7 +105,7 @@ train_data_loader = DataLoader(
     prefetch_factor=2,
 )
 test_dataset = HierarchicalClassificationJsonDataset(
-    json_file='test.json',
+    json_file=file_dir / 'test.json',
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -148,7 +146,7 @@ class Model(pl.LightningModule):
             output_dim=128,
         )
 
-        with open('hierarchical_labels.pkl', 'rb') as f:
+        with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
             hierarchical_labels = pickle.load(f)
         self.hierarchical_softmax = HierarchicalSoftMax(
             classifier_input_dim=128,
@@ -157,19 +155,9 @@ class Model(pl.LightningModule):
         )
 
         self._accuracy = CategoricalAccuracy()
-        # self._loss = FocalLoss(
-        #     num_classes=num_labels,
-        # )
-        balance_probs = False
-        if balance_probs:
-            self._loss = NegativeEntropy(
-                inputs_logits=False,
-            )
-        else:
-            self._loss = FocalLoss(
-                num_classes=num_labels,
-                inputs_logits=False,
-            )
+        self._loss = FocalLoss(
+            num_classes=num_labels,
+        )
 
     def forward(self, inputs: torch.LongTensor, label: torch.LongTensor = None):
         logits = self.model.forward(inputs)
@@ -198,7 +186,7 @@ print(model)
 
 
 def export_state_dict():
-    torch.save(model.state_dict(), 'pytorch_model.bin')
+    torch.save(model.state_dict(), file_dir / 'pytorch_model.bin')
     return
 
 
@@ -213,25 +201,25 @@ def export_jit():
     # 模型序列化
     # trace 方式. 将模型运行一遍, 以记录对张量的操作并生成图模型.
     trace_model = torch.jit.trace(func=model, example_inputs=example_inputs, strict=False)
-    trace_model.save('trace_model.zip')
+    trace_model.save(file_dir / 'trace_model.zip')
 
     # 量化
     quantized_model = torch.quantization.quantize_dynamic(
         model, {torch.nn.Linear}, dtype=torch.qint8
     )
     trace_quant_model = torch.jit.trace(func=quantized_model, example_inputs=example_inputs, strict=False)
-    trace_quant_model.save('trace_quant_model.zip')
+    trace_quant_model.save(file_dir / 'trace_quant_model.zip')
 
     # script 方式. 通过解析代码来生成图模型, 相较于 trace 方式, 它可以处理 if 条件判断的情况.
     # script_model = torch.jit.script(obj=model)
-    # script_model.save('script_model.zip')
+    # script_model.save(file_dir / 'script_model.zip')
 
     # 量化
     # quantized_model = torch.quantization.quantize_dynamic(
     #     model, {torch.nn.Linear}, dtype=torch.qint8
     # )
     # script_quant_model = torch.jit.script(quantized_model)
-    # script_quant_model.save('script_quant_model.zip')
+    # script_quant_model.save(file_dir / 'script_quant_model.zip')
     return
 
 
@@ -243,14 +231,14 @@ def export_onnx():
     batch_tokens, _ = collate_fn([instance])
     example_inputs = (batch_tokens,)
 
-    trace_model = torch.jit.load('trace_model.zip')
+    trace_model = torch.jit.load(file_dir / 'trace_model.zip')
 
     # torch.onnx.export 默认使用 trace 模式
     # 转换为 onnx 模型
     torch.onnx.export(
         model=trace_model,
         args=example_inputs,
-        f='trace_model.onnx',
+        f=file_dir / 'trace_model.onnx',
         input_names=["inputs"],
         output_names=["outputs"],
     )

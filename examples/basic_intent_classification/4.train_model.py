@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import os
+from pathlib import Path
 import pickle
 import platform
 import sys
@@ -27,16 +28,9 @@ from toolbox.torchtext.models.text_classification.text_cnn import TextCNN
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--ckpt_path',
-        default=None,
-        type=str,
-    )
-    parser.add_argument(
-        '--pretrained_model_dir',
-        default=r'D:\程序员\NLP预训练模型\chinese-bert-wwm-ext',
-        type=str,
-    )
+    parser.add_argument('--file_dir', default='./', type=str)
+    parser.add_argument('--ckpt_path', default=None, type=str)
+    parser.add_argument('--pretrained_model_dir', required=True, type=str)
     args = parser.parse_args()
     return args
 
@@ -45,8 +39,11 @@ args = get_args()
 ckpt_path = args.ckpt_path
 pretrained_model_dir = args.pretrained_model_dir
 
+file_dir = Path(args.file_dir)
+file_dir.mkdir(exist_ok=True)
 
-vocabulary = Vocabulary.from_files('vocabulary')
+
+vocabulary = Vocabulary.from_files(file_dir / 'vocabulary')
 
 
 class CollateFunction(object):
@@ -92,7 +89,7 @@ collate_fn = CollateFunction(vocab=vocabulary, token_min_padding_length=5)
 tokenizer = PretrainedBertTokenizer(pretrained_model_dir)
 
 train_dataset = HierarchicalClassificationJsonDataset(
-    json_file='train.json',
+    json_file=file_dir / 'train.json',
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -108,7 +105,7 @@ train_data_loader = DataLoader(
 )
 
 test_dataset = HierarchicalClassificationJsonDataset(
-    json_file='test.json',
+    json_file=file_dir / 'test.json',
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -149,7 +146,7 @@ class Model(pl.LightningModule):
             output_dim=128,
         )
 
-        with open('hierarchical_labels.pkl', 'rb') as f:
+        with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
             hierarchical_labels = pickle.load(f)
         self.hierarchical_softmax = HierarchicalSoftMax(
             classifier_input_dim=128,
@@ -268,6 +265,7 @@ trainer = Trainer(
     progress_bar_refresh_rate=10,
     profiler='simple',
     accumulate_grad_batches=1,
+    default_root_dir=file_dir,
 
 )
 

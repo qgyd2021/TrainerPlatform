@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+from pathlib import Path
 import random
 import sys
 
@@ -17,15 +18,9 @@ from project_settings import project_path
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--without_irrelevant_domain',
-        action='store_true',
-    )
-    parser.add_argument(
-        '--dataset_filename',
-        default='dataset.xlsx',
-        type=str,
-    )
+    parser.add_argument('--file_dir', default='./', type=str)
+    parser.add_argument('--without_irrelevant_domain', action='store_true')
+    parser.add_argument('--dataset_filename', default='dataset.xlsx', type=str)
     parser.add_argument('--do_lowercase', action='store_true')
     args = parser.parse_args()
     return args
@@ -37,9 +32,12 @@ def main():
     dataset_filename = args.dataset_filename
     do_lowercase = args.do_lowercase
 
+    file_dir = Path(args.file_dir)
+    file_dir.mkdir(exist_ok=True)
+
     n_hierarchical = 2
 
-    df = pd.read_excel(dataset_filename)
+    df = pd.read_excel(file_dir / dataset_filename)
     df = df[df['selected'] == 1]
 
     dataset = list()
@@ -69,8 +67,8 @@ def main():
 
     dataset = list(sorted(dataset, key=lambda x: x['random1'], reverse=True))
 
-    f_train = open('train.json', 'w', encoding='utf-8')
-    f_test = open('test.json', 'w', encoding='utf-8')
+    f_train = open(file_dir / 'train.json', 'w', encoding='utf-8')
+    f_test = open(file_dir / 'test.json', 'w', encoding='utf-8')
 
     for row in tqdm(dataset):
         # print(row)

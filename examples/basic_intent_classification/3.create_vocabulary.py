@@ -3,6 +3,7 @@
 import argparse
 from collections import OrderedDict
 import os
+from pathlib import Path
 import pickle
 import sys
 
@@ -16,13 +17,9 @@ from toolbox.torch.utils.data.vocabulary import Vocabulary
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--pretrained_model_dir',
-        default=r'D:\程序员\NLP预训练模型\chinese-bert-wwm-ext',
-        type=str,
-    )
+    parser.add_argument('--file_dir', default='./', type=str)
+    parser.add_argument('--pretrained_model_dir', required=True, type=str)
     args = parser.parse_args()
-
     return args
 
 
@@ -30,7 +27,10 @@ def main():
     args = get_args()
     pretrained_model_dir = args.pretrained_model_dir
 
-    with open('hierarchical_labels.pkl', 'rb') as f:
+    file_dir = Path(args.file_dir)
+    file_dir.mkdir(exist_ok=True)
+
+    with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
         hierarchical_labels = pickle.load(f)
     print(hierarchical_labels)
     # 深度遍历
@@ -63,9 +63,10 @@ def main():
         oov_token='[UNK]',
         namespace='tokens',
     )
-    vocabulary.save_to_files('vocabulary')
+    vocabulary.save_to_files(file_dir / 'vocabulary')
 
-    raise AssertionError('注意检查 Vocabulary 中标签的顺序与 hierarchical_labels 是否一致. ')
+    print('注意检查 Vocabulary 中标签的顺序与 hierarchical_labels 是否一致. ')
+    return
 
 
 if __name__ == '__main__':

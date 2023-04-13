@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import os
+from pathlib import Path
 import pickle
 import platform
 import sys
@@ -29,31 +30,12 @@ from toolbox.torchtext.models.text_classification.text_cnn import TextCNN
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--ckpt_path',
-        default=None,
-        type=str,
-    )
-    parser.add_argument(
-        '--pretrained_model_dir',
-        default=r'D:\程序员\NLP预训练模型\chinese-bert-wwm-ext',
-        type=str,
-    )
-    parser.add_argument(
-        '--dataset_filename',
-        default='dataset.xlsx',
-        type=str,
-    )
-    parser.add_argument(
-        '--output_filename',
-        default='test_output.xlsx',
-        type=str,
-    )
-    parser.add_argument(
-        '--export_limit',
-        default=None,
-        type=int,
-    )
+    parser.add_argument('--file_dir', default='./', type=str)
+    parser.add_argument('--ckpt_path', default=None, type=str)
+    parser.add_argument('--pretrained_model_dir', required=True, type=str)
+    parser.add_argument('--dataset_filename', default='dataset.xlsx', type=str)
+    parser.add_argument('--output_filename', default='test_output.xlsx', type=str)
+    parser.add_argument('--export_limit', default=None, type=int)
     args = parser.parse_args()
     return args
 
@@ -65,8 +47,11 @@ dataset_filename = args.dataset_filename
 output_filename = args.output_filename
 export_limit = args.export_limit or float('inf')
 
+file_dir = Path(args.file_dir)
+file_dir.mkdir(exist_ok=True)
 
-vocabulary = Vocabulary.from_files('vocabulary')
+
+vocabulary = Vocabulary.from_files(file_dir / 'vocabulary')
 
 
 class CollateFunction(object):
@@ -112,7 +97,7 @@ collate_fn = CollateFunction(vocab=vocabulary, token_min_padding_length=5)
 tokenizer = PretrainedBertTokenizer(pretrained_model_dir)
 
 train_dataset = HierarchicalClassificationJsonDataset(
-    json_file='train.json',
+    json_file=file_dir / 'train.json',
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -128,7 +113,7 @@ train_data_loader = DataLoader(
 )
 
 test_dataset = HierarchicalClassificationJsonDataset(
-    json_file='test.json',
+    json_file=file_dir / 'test.json',
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -169,7 +154,7 @@ class Model(pl.LightningModule):
             output_dim=128,
         )
 
-        with open('hierarchical_labels.pkl', 'rb') as f:
+        with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
             hierarchical_labels = pickle.load(f)
         self.hierarchical_softmax = HierarchicalSoftMax(
             classifier_input_dim=128,
@@ -254,9 +239,7 @@ def main():
             break
 
     result = pd.DataFrame(result)
-    result.to_excel(output_filename, index=False, encoding='utf_8_sig')
-    # result.to_excel(output_filename, index=False)
-
+    result.to_excel(file_dir / output_filename, index=False, encoding='utf_8_sig')
     return
 
 

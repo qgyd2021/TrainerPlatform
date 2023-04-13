@@ -9,7 +9,6 @@ pretrained/
 thirdparty/
 
 **/cache_dir
-**/data
 **/lightning_logs
 **/log
 **/logs
