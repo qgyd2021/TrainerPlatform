@@ -2,9 +2,10 @@
 
 .idea
 
-datasets/
-demo/
-models/
+./datasets/
+./demo/
+./models/
+
 pretrained/
 thirdparty/
 
