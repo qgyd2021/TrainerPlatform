@@ -182,11 +182,13 @@ class Model(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-5)
-        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1)
+        lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1)
 
         result = {
             'optimizer': optimizer,
-            'scheduler': scheduler,
+            'lr_scheduler': {
+                'scheduler': lr_scheduler
+            },
         }
         return result
 
@@ -241,6 +243,9 @@ if args.ckpt_path is not None:
         map_location=torch.device('cpu')
     )
 model.train()
+
+if torch.cuda.is_available():
+    model.cuda(device=0)
 
 print(model)
 
