@@ -107,6 +107,7 @@ pretrained_bert_model_dict=(
   ["chinese-bert-wwm-ext"]="https://huggingface.co/hfl/chinese-bert-wwm-ext"
   ["bert-base-uncased"]="https://huggingface.co/bert-base-uncased"
   ["bert-base-japanese"]="https://huggingface.co/cl-tohoku/bert-base-japanese"
+  ["bert-base-vietnamese-uncased"]="https://huggingface.co/trituenhantaoio/bert-base-vietnamese-uncased"
 
 )
 pretrained_model_dir="${pretrained_models_dir}/${pretrained_bert_model_name}"
