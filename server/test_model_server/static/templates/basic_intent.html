@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模型体验</title>
+  <meta charset="UTF-8">
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+
+</head>
+
+<body>
+<!-- 导航栏 -->
+<div class="navigation">
+  <div>
+
+    <div class="global_options">
+      <div>选择模型: </div>
+      <form>
+        <select class="global_selector" id="select_model">
+<!--          <option>dummy</option>-->
+        </select>
+      </form>
+    </div>
+
+    <div class="global_options" id="search">搜索</div>
+
+  </div>
+</div>
+
+<!-- 内容 -->
+<div class="content">
+
+  <div class="left_content">
+    <ul class="v_nav" >
+      <li>1. 选择模型. </li><li>2. 加载模型. </li><li>3. 测试模型. </li>
+    </ul>
+  </div>
+
+  <div class="center_content">
+    <div id="audio_display_name">audio_display_name</div>
+    <div class="center_content_box">
+      <div class="center_content_left">
+        <div>
+          <audio controls id="voicemail_audio_box" autoplay>
+            <source id="voicemail_audio" src="" type="audio/wav">
+          </audio>
+        </div>
+        <div class="spectrum" id="spectrum">
+          <img alt="spectrum_image" src="" id="spectrum_image">
+        </div>
+      </div>
+      <div class="center_content_center">
+        <button id="play_button">播放</button>
+        <button id="last_button">上一个</button>
+<!--        <button id="next_button">跳过</button>-->
+      </div>
+      <div class="center_content_right" id="available_label_box">
+        <!--      <div class="label_button">sample1</div>-->
+        <!--      <div class="label_button">sample2</div>-->
+        <!--      <div class="label_button">sample3</div>-->
+        <!--      <div class="label_button">sample4</div>-->
+
+      </div>
+    </div>
+  </div>
+
+  <div class="right_content">
+    <div id="annotator_workload">
+      <div id="model_introduction">模型介绍</div>
+    </div>
+  </div>
+
+</div>
+
+
+<!--  底部  -->
+<div class="tail">
+  <div>
+    NX
+  </div>
+</div>
+
+<!-- 引入样式和脚本 -->
+<link rel="stylesheet" href="../css/basic_intent.css" />
+<script src="../js/basic_intent.js"></script>
+
+</body>
+</html>
+
+
+
