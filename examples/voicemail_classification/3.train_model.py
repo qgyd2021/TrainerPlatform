@@ -194,11 +194,13 @@ class Model(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
-        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1)
+        lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1000)
 
         result = {
             'optimizer': optimizer,
-            'scheduler': scheduler,
+            'lr_scheduler': {
+                'scheduler': lr_scheduler
+            },
         }
         return result
 

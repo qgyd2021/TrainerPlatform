@@ -17,7 +17,6 @@ from tqdm import tqdm
 
 def get_args():
     parser = argparse.ArgumentParser()
-    # parser.add_argument('--filename_patterns', nargs='+')
     parser.add_argument('--file_dir', default='./', type=str)
     parser.add_argument('--task', default='default', type=str)
     parser.add_argument('--filename_patterns', required=True, action='append')

@@ -186,7 +186,6 @@ class Model(pl.LightningModule):
 
         result = {
             'optimizer': optimizer,
-            # 'scheduler': lr_scheduler,
             # 'lr_scheduler': {
             #     'scheduler': lr_scheduler
             # },

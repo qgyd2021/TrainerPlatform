@@ -14,8 +14,6 @@ stop_stage=9
 work_dir="$(pwd)"
 file_dir="$(pwd)"
 final_model_name=cnn_voicemail_tw
-final_model_dir="${work_dir}/../../models/${final_model_name}";
-
 
 # model params
 batch_size=64
@@ -52,6 +50,9 @@ while true; do
     *) break;
   esac
 done
+
+final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
+
 
 $verbose && echo "system_version: ${system_version}"
 
@@ -94,6 +95,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
+  --file_dir "${file_dir}" \
   --filename_patterns "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
   --filename_patterns "D:/programmer/asr_datasets/voicemail/886/wav_segmented/*/*.wav" \
 
@@ -103,7 +105,8 @@ fi
 if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
   $verbose && echo "stage 1: create vocabulary"
   cd "${work_dir}" || exit 1
-  python3 2.create_vocabulary.py
+  python3 2.create_vocabulary.py \
+  --file_dir "${file_dir}"
 
 fi
 
@@ -112,6 +115,7 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
   $verbose && echo "stage 2: train model"
   cd "${work_dir}" || exit 1
   python3 3.train_model.py \
+  --file_dir "${file_dir}" \
   --batch_size ${batch_size} \
   --max_epochs ${max_epochs} \
   --save_top_k ${save_top_k} \
@@ -131,6 +135,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
   cd "${work_dir}" || exit 1
 
   python3 4.test_model.py \
+  --file_dir "${file_dir}" \
   --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
   --train_dataset train.xlsx \
   --test_dataset test.xlsx
@@ -146,6 +151,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
   cd "${work_dir}" || exit 1
 
   python3 5.export_model.py \
+  --file_dir "${file_dir}" \
   --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
 
 fi

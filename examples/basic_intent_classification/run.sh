@@ -244,7 +244,7 @@ if [ ${stage} -le 8 ] && [ ${stop_stage} -ge 8 ]; then
   cp "trace_model.zip" "${final_model_dir}/final.zip"
   cp -r "vocabulary" "${final_model_dir}/vocabulary"
   cp -f "lightning_logs/version_1/checkpoints/${target_file}" "${final_model_dir}/${target_file}"
-
+  cp "${test_output_filename}" "${final_model_dir}/${test_output_filename}"
 fi
 
 
