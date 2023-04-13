@@ -244,8 +244,8 @@ if args.ckpt_path is not None:
     )
 model.train()
 
-if torch.cuda.is_available():
-    model.cuda(device=0)
+# if torch.cuda.is_available():
+#     model.cuda(device=0)
 
 print(model)
 
@@ -273,7 +273,7 @@ trainer = Trainer(
 
     # https://mp.weixin.qq.com/s?__biz=MzI1MjQ2OTQ3Ng==&mid=2247561650&idx=1&sn=ea6de6d2a6e4831c735d98d37cbfd026&chksm
     gpus=[0] if torch.cuda.is_available() else None,
-    num_nodes=1,
+    # num_nodes=1,
 
 )
 
