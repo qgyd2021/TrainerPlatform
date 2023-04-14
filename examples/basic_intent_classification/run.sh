@@ -242,9 +242,11 @@ if [ ${stage} -le 8 ] && [ ${stop_stage} -ge 8 ]; then
 
   cp "pytorch_model.bin" "${final_model_dir}/pytorch_model.bin"
   cp "trace_model.zip" "${final_model_dir}/final.zip"
+  cp "labels.json" "${final_model_dir}/labels.json"
   cp -r "vocabulary" "${final_model_dir}/vocabulary"
   cp -f "lightning_logs/version_1/checkpoints/${target_file}" "${final_model_dir}/${target_file}"
   cp "${test_output_filename}" "${final_model_dir}/${test_output_filename}"
+  cp "${pretrained_model_dir}/vocab.txt" "${final_model_dir}/vocab.txt"
 fi
 
 

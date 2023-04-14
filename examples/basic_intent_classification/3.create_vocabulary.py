@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 from collections import OrderedDict
+import json
 import os
 from pathlib import Path
 import pickle
@@ -64,6 +65,14 @@ def main():
         namespace='tokens',
     )
     vocabulary.save_to_files(file_dir / 'vocabulary')
+
+    # labels.json
+    token_to_index = vocabulary.get_token_to_index_vocabulary(namespace='labels')
+    labels = list()
+    for k, v in sorted(token_to_index.items(), key=lambda x: x[1]):
+        labels.append(k)
+    with open(file_dir / 'labels.json', 'w', encoding='utf-8') as f:
+        json.dump(labels, f)
 
     print('注意检查 Vocabulary 中标签的顺序与 hierarchical_labels 是否一致. ')
     return
