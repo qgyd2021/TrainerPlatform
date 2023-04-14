@@ -12,7 +12,7 @@ sh run.sh \
 --file_dir "./output_dir_20230414_cn" \
 --dataset_filename "../../../datasets/intent_classification/intent_classification_cn.xlsx" \
 --pretrained_bert_model_name "chinese-bert-wwm-ext" \
---final_model_name "basic_intent_cn"
+--final_model_name "basic_intent_cn_20230414"
 
 
 sh run.sh \
@@ -22,7 +22,7 @@ sh run.sh \
 --file_dir "./output_dir_20230414_en" \
 --dataset_filename "../../../datasets/intent_classification/intent_classification_en.xlsx" \
 --pretrained_bert_model_name "bert-base-uncased" \
---final_model_name "basic_intent_en"
+--final_model_name "basic_intent_en_20230414"
 
 
 
@@ -33,7 +33,7 @@ sh run.sh \
 --file_dir "./output_dir_20230413_jp" \
 --dataset_filename "../../../datasets/intent_classification/intent_classification_jp.xlsx" \
 --pretrained_bert_model_name "bert-base-japanese" \
---final_model_name "basic_intent_jp"
+--final_model_name "basic_intent_jp_20230414"
 
 
 sh run.sh \
@@ -43,7 +43,7 @@ sh run.sh \
 --file_dir "./output_dir_20230413_vi" \
 --dataset_filename "../../../datasets/intent_classification/intent_classification_vi.xlsx" \
 --pretrained_bert_model_name "bert-base-vietnamese-uncased" \
---final_model_name "basic_intent_vi"
+--final_model_name "basic_intent_vi_20230414"
 
 
 

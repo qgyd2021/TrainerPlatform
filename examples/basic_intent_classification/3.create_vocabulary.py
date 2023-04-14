@@ -72,7 +72,7 @@ def main():
     for k, v in sorted(token_to_index.items(), key=lambda x: x[1]):
         labels.append(k)
     with open(file_dir / 'labels.json', 'w', encoding='utf-8') as f:
-        json.dump(labels, f)
+        json.dump(labels, f, indent=4, ensure_ascii=False)
 
     print('注意检查 Vocabulary 中标签的顺序与 hierarchical_labels 是否一致. ')
     return
