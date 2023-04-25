@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -1 --stop_stage 9
-# sh run.sh --stage 0 --stop_stage 2
+# sh run.sh --stage 0 --stop_stage 4
 # sh run.sh --stage 3 --stop_stage 4
 # sh run.sh --stage 2 --stop_stage 4
 
@@ -96,8 +96,10 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
   --file_dir "${file_dir}" \
-  --filename_patterns "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
-  --filename_patterns "D:/programmer/asr_datasets/voicemail/886/wav_segmented/*/*.wav" \
+  --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/wav_segmented/*/*.wav" \
+  --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/886/wav_segmented/*/*.wav" \
+#  --filename_patterns "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
+#  --filename_patterns "D:/programmer/asr_datasets/voicemail/886/wav_segmented/*/*.wav" \
 
 fi
 
