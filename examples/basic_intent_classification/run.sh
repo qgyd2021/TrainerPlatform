@@ -258,3 +258,16 @@ if [ ${stage} -le 9 ] && [ ${stop_stage} -ge 9 ]; then
   --model_dir "${final_model_dir}" \
   --pretrained_model_dir "${pretrained_model_dir}"
 fi
+
+
+if [ ${stage} -le 10 ] && [ ${stop_stage} -ge 10 ]; then
+  $verbose && echo "stage 10: git push to hugging face"
+  cd "${final_model_dir}/.." || exit 1
+
+  cp -r "${final_model_name}" "BasicIntentModels/${final_model_name}"
+  cd "BasicIntentModels" || exit 1
+  git add .
+  git commit -m "[update]${final_model_name}"
+  git push origin main
+fi
+

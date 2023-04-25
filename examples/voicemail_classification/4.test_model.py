@@ -79,7 +79,7 @@ train_dataset = WaveClassifierExcelDataset(
     expected_sample_rate=8000,
 )
 train_data_loader = DataLoader(
-    dataset=file_dir / train_dataset,
+    dataset=train_dataset,
     batch_size=args.batch_size,
     shuffle=True,
     # Linux 系统中可以使用多个子进程加载数据, 而在 Windows 系统中不能.
@@ -95,7 +95,7 @@ test_dataset = WaveClassifierExcelDataset(
     expected_sample_rate=8000,
 )
 test_data_loader = DataLoader(
-    dataset=file_dir / test_dataset,
+    dataset=test_dataset,
     batch_size=args.batch_size,
     shuffle=True,
     num_workers=0 if platform.system() == 'Windows' else os.cpu_count(),

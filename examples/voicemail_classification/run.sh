@@ -3,7 +3,7 @@
 # sh run.sh --stage -1 --stop_stage 9
 # sh run.sh --stage 0 --stop_stage 2
 # sh run.sh --stage 3 --stop_stage 4
-# sh run.sh --stage 4 --stop_stage 4
+# sh run.sh --stage 2 --stop_stage 4
 
 # params
 system_version="windows";

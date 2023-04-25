@@ -6,9 +6,9 @@ source /data/local/bin/TrainerPlatform/bin/activate
 
 
 sh run.sh \
---system_version "centos" \
---stage -1 \
---stop_stage 9 \
+--system_version "windows" \
+--stage 10 \
+--stop_stage 10 \
 --file_dir "./output_dir_20230414_cn" \
 --dataset_filename "../../../datasets/intent_classification/intent_classification_cn.xlsx" \
 --pretrained_bert_model_name "chinese-bert-wwm-ext" \
