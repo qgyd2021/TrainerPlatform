@@ -60,7 +60,7 @@ sh run.sh \
 
         logger.info(cmd)
         if sys.platform not in ('win32', ):
-            Command.popen(cmd)
+            Command.system(cmd)
 
         return True
     return False
