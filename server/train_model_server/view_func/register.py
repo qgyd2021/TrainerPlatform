@@ -41,8 +41,8 @@ def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
         task_cnn_voicemail_to_last_count[language] = len(filename_list)
 
         logger.info('run {}'.format(task_name))
-        cmd = """nohup \
-cd {task_work_dir} && sh run.sh \
+        cmd = """cd {task_work_dir} && nohup \
+sh run.sh \
 --stage -1 --stop_stage 9 \
 --system_version {system_version} \
 --filename_patterns {filename_pattern1} \
