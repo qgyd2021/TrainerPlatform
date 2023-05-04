@@ -31,8 +31,9 @@ def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
     filename_pattern = os.path.join(data_dir, '*/*.wav')
     filename_list = glob(filename_pattern)
 
-    logger.debug('task cnn voicemail, task_name: {}, language: {}, increase_number: {}, last_count: {}, this_count: {}'.format(
-        task_name, language, increase_number, last_count, len(filename_list)))
+    logger.debug('task cnn voicemail, task_name: {}, language: {}, '
+                 'increase_number: {}, last_count: {}, this_count: {}, data_dir: {}'.format(
+        task_name, language, increase_number, last_count, len(filename_list), data_dir))
 
     if len(filename_list) > last_count + increase_number:
         task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
