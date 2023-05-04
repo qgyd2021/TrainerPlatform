@@ -14,6 +14,7 @@ stop_stage=9
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
 final_model_name=cnn_voicemail_tw
+filename_patterns="/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/wav_finished/*/*.wav"
 
 # model params
 batch_size=64
@@ -97,10 +98,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
   --file_dir "${file_dir}" \
-  --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/wav_segmented/*/*.wav" \
-  --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/886/wav_segmented/*/*.wav" \
-#  --filename_patterns "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
-#  --filename_patterns "D:/programmer/asr_datasets/voicemail/886/wav_segmented/*/*.wav" \
+  --filename_patterns "${filename_patterns}" \
 
 fi
 
