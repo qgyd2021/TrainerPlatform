@@ -28,7 +28,7 @@ task_cnn_voicemail_to_last_count = defaultdict(int)
 def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
     last_count = task_cnn_voicemail_to_last_count[task_name]
 
-    filename_pattern = os.path.join(data_dir, '*/*.wav')
+    filename_pattern = os.path.join(data_dir, 'wav_finished/*/*.wav')
     filename_list = glob(filename_pattern)
 
     logger.debug('task cnn voicemail, task_name: {}, language: {}, '
@@ -45,10 +45,12 @@ def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
 sh run.sh \
 --stage -1 --stop_stage 9 \
 --system_version {system_version} \
+--filename_patterns {filename_pattern1} \
 --file_folder_name {file_folder_name} \
 --final_model_name {final_model_name} \
 &""".format(
             system_version='centos',
+            filename_pattern1=filename_pattern,
             file_folder_name=task_name,
             final_model_name=task_name,
         ).strip()
