@@ -18,6 +18,7 @@ from toolbox.logging.misc import json_2_str
 from toolbox.os.command import Command
 from server.train_model_server import settings
 from project_settings import project_path
+from toolbox.string.misc import escape_string
 
 logger = logging.getLogger('server')
 
@@ -52,7 +53,7 @@ sh run.sh \
 --final_model_name {final_model_name} \
 &""".format(
                 system_version='centos',
-                filename_pattern1=filename_pattern,
+                filename_pattern1=filename_pattern.replace(r'*', r'\*'),
                 file_folder_name=task_name,
                 final_model_name=task_name,
             ).strip()

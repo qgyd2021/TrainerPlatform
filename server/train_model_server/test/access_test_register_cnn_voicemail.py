@@ -17,8 +17,9 @@ def get_args():
     parser.add_argument('--port', default=9180, type=int)
     parser.add_argument(
         '--language',
-        default='en-US',
+        # default='en-US',
         # default='id-ID',
+        default='zh-TW',
         type=str
     )
     parser.add_argument('--increase_number', default=5000, type=int)
