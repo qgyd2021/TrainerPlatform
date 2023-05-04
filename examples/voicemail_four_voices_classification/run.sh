@@ -4,10 +4,6 @@
 # sh run.sh --stage -1 --stop_stage 9 --system_version centos
 # sh run.sh --stage 0 --stop_stage 0
 
-<<comment
-sh run.sh --stage -1 --stop_stage 9 \
-
-comment
 
 # params
 system_version="windows";
@@ -110,7 +106,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   --filename_patterns \
   "/data/tianxing/PycharmProjects/datasets/voicemail/en-US/*/*.wav" \
   "/data/tianxing/PycharmProjects/datasets/voicemail/ja-JP/*/*.wav" \
-  "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/886/*/*.wav" \
+  "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/886/wav_segmented/*/*.wav" \
   "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/wav_segmented/*/*.wav"
 
 fi

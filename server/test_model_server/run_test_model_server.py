@@ -19,6 +19,7 @@ log.setup(log_directory=settings.log_directory)
 
 from server.flask_server.view_func.heart_beat import heart_beat
 from server.test_model_server.view_func.basic_intent import test_model_view_func, get_available_models_view_func
+from server.test_model_server.view_func.forward import forward_view_func
 
 
 logger = logging.getLogger('server')
@@ -35,6 +36,7 @@ flask_app = Flask(
 flask_app.add_url_rule(rule='/HeartBeat', view_func=heart_beat, methods=['GET', 'POST'], endpoint='HeartBeat')
 flask_app.add_url_rule(rule='/basic_intent', view_func=test_model_view_func, methods=['GET', 'POST'], endpoint='BasicIntent')
 flask_app.add_url_rule(rule='/basic_intent/get_available_models', view_func=get_available_models_view_func, methods=['GET', 'POST'], endpoint='GetAvailableModels')
+flask_app.add_url_rule(rule='/forward', view_func=forward_view_func, methods=['GET', 'POST'], endpoint='Forward')
 
 
 if __name__ == '__main__':

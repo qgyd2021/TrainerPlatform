@@ -5,6 +5,8 @@ import os
 import sqlite3
 from typing import List
 
+from flask_apscheduler import APScheduler
+
 from project_settings import project_path
 from toolbox.os.environment import EnvironmentManager
 
@@ -20,6 +22,14 @@ environment = EnvironmentManager(
 )
 
 port = environment.get(key='port', default=9180, dtype=int)
+
+dataset_dir = environment.get(
+    key='dataset_dir', default=os.path.join(project_path, '../datasets/voicemail'), dtype=str
+)
+
+
+# plugin
+scheduler = APScheduler()
 
 
 if __name__ == '__main__':

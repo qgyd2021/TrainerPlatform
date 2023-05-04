@@ -12,7 +12,7 @@ stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
 work_dir="$(pwd)"
-file_dir="$(pwd)"
+file_folder_name=file_folder_name
 final_model_name=cnn_voicemail_tw
 
 # model params
@@ -51,6 +51,7 @@ while true; do
   esac
 done
 
+file_dir="${work_dir}/${file_folder_name}"
 final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
 
 
@@ -159,7 +160,22 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
 fi
 
 
+if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+  $verbose && echo "stage 5: collect files"
 
+  mkdir -p "${final_model_dir}";
 
+  target_file=$(search_best_ckpt version_0 "${patience}");
+  test target_file || exit 1;
 
+  cd "${work_dir}" || exit 1;
 
+  cp "${file_dir}/pytorch_model.bin" "${final_model_dir}/pytorch_model.bin"
+  cp "${file_dir}/cnn_voicemail.pth" "${final_model_dir}/cnn_voicemail.pth"
+  cp "${file_dir}/trace_model.zip" "${final_model_dir}/trace_model.zip"
+  cp "${file_dir}/trace_quant_model.zip" "${final_model_dir}/trace_quant_model.zip"
+  cp "${file_dir}/script_model.zip" "${final_model_dir}/script_model.zip"
+  cp "${file_dir}/script_quant_model.zip" "${final_model_dir}/script_quant_model.zip"
+  cp "${file_dir}/vocabulary" "${final_model_dir}/vocabulary"
+
+fi
