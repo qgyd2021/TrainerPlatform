@@ -22,6 +22,7 @@ def get_args():
         type=str
     )
     parser.add_argument('--increase_number', default=5000, type=int)
+    parser.add_argument('--interval', default=1, type=int)
 
     args = parser.parse_args()
     return args
@@ -39,7 +40,9 @@ def main():
     data = {
         'language': args.language,
         'increase_number': args.increase_number,
-        # 'data_dir': r'D:\programmer\asr_datasets\voicemail\origin_wav\zh-TW\wav_segmented'
+        # 'data_dir': r'D:\programmer\asr_datasets\voicemail\origin_wav\zh-TW\wav_segmented',
+        'interval': args.interval,
+
     }
 
     headers = {

@@ -56,9 +56,8 @@ cd {task_work_dir} && sh run.sh \
             final_model_name=task_name,
         ).strip()
 
-        if sys.platform in ('win32', ):
-            logger.info(cmd)
-        else:
+        logger.info(cmd)
+        if sys.platform not in ('win32', ):
             Command.popen(cmd)
 
         return True
