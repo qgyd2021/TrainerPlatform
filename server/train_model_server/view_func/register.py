@@ -22,28 +22,26 @@ from project_settings import project_path
 logger = logging.getLogger('server')
 
 
-task_cnn_voicemail_to_last_count = defaultdict(int)
+class TaskCnnVoicemailFunc(object):
+    def __init__(self):
+        self.task_cnn_voicemail_to_last_count = defaultdict(int)
 
+    def __call__(self, task_name, language, increase_number, data_dir, last_count):
+        filename_pattern = os.path.join(data_dir, 'wav_finished/*/*.wav')
+        filename_list = glob(filename_pattern)
 
-def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
-    global task_cnn_voicemail_to_last_count
+        logger.debug(
+            'task cnn voicemail, task_name: {}, language: {}, '
+            'increase_number: {}, last_count: {}, this_count: {}, data_dir: {}'.format(
+                task_name, language, increase_number, last_count, len(filename_list), data_dir))
 
-    last_count = task_cnn_voicemail_to_last_count[task_name]
+        if len(filename_list) > last_count + increase_number:
+            task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
 
-    filename_pattern = os.path.join(data_dir, 'wav_finished/*/*.wav')
-    filename_list = glob(filename_pattern)
+            self.task_cnn_voicemail_to_last_count[language] = len(filename_list)
 
-    logger.debug('task cnn voicemail, task_name: {}, language: {}, '
-                 'increase_number: {}, last_count: {}, this_count: {}, data_dir: {}'.format(
-        task_name, language, increase_number, last_count, len(filename_list), data_dir))
-
-    if len(filename_list) > last_count + increase_number:
-        task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
-
-        task_cnn_voicemail_to_last_count[language] = len(filename_list)
-
-        logger.info('run {}'.format(task_name))
-        cmd = """nohup \
+            logger.info('run {}'.format(task_name))
+            cmd = """nohup \
 sh run.sh \
 --stage -1 --stop_stage 9 \
 --system_version {system_version} \
@@ -51,19 +49,19 @@ sh run.sh \
 --file_folder_name {file_folder_name} \
 --final_model_name {final_model_name} \
 &""".format(
-            system_version='centos',
-            filename_pattern1=filename_pattern,
-            file_folder_name=task_name,
-            final_model_name=task_name,
-        ).strip()
+                system_version='centos',
+                filename_pattern1=filename_pattern,
+                file_folder_name=task_name,
+                final_model_name=task_name,
+            ).strip()
 
-        logger.info(cmd)
-        if sys.platform not in ('win32', ):
-            Command.cd(task_work_dir)
-            Command.system(cmd)
+            logger.info(cmd)
+            if sys.platform not in ('win32', ):
+                Command.cd(task_work_dir)
+                Command.system(cmd)
 
-        return True
-    return False
+            return True
+        return False
 
 
 @common_route_wrap
@@ -91,7 +89,7 @@ def register_cnn_voicemail_view_func():
 
     task_name = 'task_cnn_voicemail_{}'.format(language)
     settings.scheduler.add_job(
-        id=task_name, func=task_cnn_voicemail_func, args=[task_name, language, increase_number, data_dir],
+        id=task_name, func=TaskCnnVoicemailFunc(), args=[task_name, language, increase_number, data_dir],
         trigger='interval',
         seconds=interval,
     )
