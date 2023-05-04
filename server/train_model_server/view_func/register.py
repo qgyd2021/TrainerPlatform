@@ -49,13 +49,12 @@ sh run.sh \
 --stage -1 --stop_stage 9 \
 --system_version {system_version} \
 --filename_patterns {filename_pattern1} \
---file_folder_name {file_folder_name} \
---final_model_name {final_model_name} \
-&""".format(
+--file_folder_name {task_name} \
+--final_model_name {task_name} \
+> nohup_{task_name}.out &""".format(
                 system_version='centos',
                 filename_pattern1=filename_pattern.replace(r'*', r'\*'),
-                file_folder_name=task_name,
-                final_model_name=task_name,
+                task_name=task_name,
             ).strip()
 
             logger.info(cmd)
