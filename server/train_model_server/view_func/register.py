@@ -26,9 +26,11 @@ class TaskCnnVoicemailFunc(object):
     def __init__(self):
         self.task_cnn_voicemail_to_last_count = defaultdict(int)
 
-    def __call__(self, task_name, language, increase_number, data_dir, last_count):
+    def __call__(self, task_name, language, increase_number, data_dir):
         filename_pattern = os.path.join(data_dir, 'wav_finished/*/*.wav')
         filename_list = glob(filename_pattern)
+
+        last_count = self.task_cnn_voicemail_to_last_count[language]
 
         logger.debug(
             'task cnn voicemail, task_name: {}, language: {}, '
