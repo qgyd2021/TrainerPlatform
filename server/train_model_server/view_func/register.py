@@ -26,6 +26,8 @@ task_cnn_voicemail_to_last_count = defaultdict(int)
 
 
 def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
+    global task_cnn_voicemail_to_last_count
+
     last_count = task_cnn_voicemail_to_last_count[task_name]
 
     filename_pattern = os.path.join(data_dir, 'wav_finished/*/*.wav')
