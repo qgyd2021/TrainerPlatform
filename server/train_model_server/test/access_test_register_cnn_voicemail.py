@@ -34,7 +34,7 @@ def main():
     data = {
         'language': args.language,
         'increase_number': args.increase_number,
-        'data_dir': r'D:\programmer\asr_datasets\voicemail\origin_wav\zh-TW\wav_segmented'
+        # 'data_dir': r'D:\programmer\asr_datasets\voicemail\origin_wav\zh-TW\wav_segmented'
     }
 
     headers = {

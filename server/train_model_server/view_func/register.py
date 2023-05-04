@@ -26,13 +26,13 @@ task_cnn_voicemail_to_last_count = defaultdict(int)
 
 
 def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
-    logger.debug('task cnn voicemail, language: {}, increase_number: {}'.format(
-        language, increase_number))
-
     last_count = task_cnn_voicemail_to_last_count[task_name]
 
     filename_pattern = os.path.join(data_dir, '*/*.wav')
     filename_list = glob(filename_pattern)
+
+    logger.debug('task cnn voicemail, task_name: {}, language: {}, increase_number: {}, last_count: {}, this_count: {}'.format(
+        task_name, language, increase_number, last_count, len(filename_list)))
 
     if len(filename_list) > last_count + increase_number:
         task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
