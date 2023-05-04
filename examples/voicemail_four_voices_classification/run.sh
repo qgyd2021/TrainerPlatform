@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -1 --stop_stage 9
-# sh run.sh --stage -1 --stop_stage 9
+# sh run.sh --stage -1 --stop_stage 9 --system_version centos
 # sh run.sh --stage 0 --stop_stage 0
+
+<<comment
+sh run.sh --stage -1 --stop_stage 9 \
+
+comment
 
 # params
 system_version="windows";
@@ -95,10 +100,18 @@ function search_best_ckpt() {
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data"
   cd "${work_dir}" || exit 1
+
+#  python3 1.prepare_data.py \
+#  --filename_patterns \
+#  "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
+#  "D:/programmer/asr_datasets/voicemail/origin_wav/en-US/wav_segmented/*/*.wav" \
+
   python3 1.prepare_data.py \
   --filename_patterns \
-  "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
-  "D:/programmer/asr_datasets/voicemail/origin_wav/en-US/wav_segmented/*/*.wav"
+  "/data/tianxing/PycharmProjects/datasets/voicemail/en-US/*/*.wav" \
+  "/data/tianxing/PycharmProjects/datasets/voicemail/ja-JP/*/*.wav" \
+  "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/886/*/*.wav" \
+  "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/wav_segmented/*/*.wav"
 
 fi
 
