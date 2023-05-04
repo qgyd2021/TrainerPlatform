@@ -42,13 +42,14 @@ def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
 
         logger.info('run {}'.format(task_name))
         cmd = """nohup \
-sh run.sh \
+cd {task_work_dir} && sh run.sh \
 --stage -1 --stop_stage 9 \
 --system_version {system_version} \
 --filename_patterns {filename_pattern1} \
 --file_folder_name {file_folder_name} \
 --final_model_name {final_model_name} \
 &""".format(
+            task_work_dir=task_work_dir,
             system_version='centos',
             filename_pattern1=filename_pattern,
             file_folder_name=task_name,
@@ -56,10 +57,8 @@ sh run.sh \
         ).strip()
 
         if sys.platform in ('win32', ):
-            Command.cd(task_work_dir)
             logger.info(cmd)
         else:
-            Command.cd(task_work_dir)
             Command.popen(cmd)
 
         return True
@@ -87,13 +86,13 @@ def register_cnn_voicemail_view_func():
     data_dir = args.get('data_dir')
     if data_dir is None:
         data_dir = os.path.join(settings.dataset_dir, language)
+    interval = args.get('interval', 24 * 60 * 60)
 
     task_name = 'task_cnn_voicemail_{}'.format(language)
     settings.scheduler.add_job(
         id=task_name, func=task_cnn_voicemail_func, args=[task_name, language, increase_number, data_dir],
         trigger='interval',
-        # seconds=2 * 60 * 60,
-        seconds=1,
+        seconds=interval,
     )
 
     return task_name

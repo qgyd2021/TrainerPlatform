@@ -14,6 +14,9 @@ register_cnn_voicemail_schema = {
         },
         'data_dir': {
             'type': 'string'
+        },
+        'interval': {
+            'type': 'integer'
         }
     }
 }
