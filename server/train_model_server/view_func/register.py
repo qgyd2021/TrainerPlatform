@@ -43,7 +43,7 @@ def task_cnn_voicemail_func(task_name, language, increase_number, data_dir):
         task_cnn_voicemail_to_last_count[language] = len(filename_list)
 
         logger.info('run {}'.format(task_name))
-        cmd = """cd {task_work_dir} && nohup \
+        cmd = """nohup \
 sh run.sh \
 --stage -1 --stop_stage 9 \
 --system_version {system_version} \
@@ -51,7 +51,6 @@ sh run.sh \
 --file_folder_name {file_folder_name} \
 --final_model_name {final_model_name} \
 &""".format(
-            task_work_dir=task_work_dir,
             system_version='centos',
             filename_pattern1=filename_pattern,
             file_folder_name=task_name,
@@ -60,6 +59,7 @@ sh run.sh \
 
         logger.info(cmd)
         if sys.platform not in ('win32', ):
+            Command.cd(task_work_dir)
             Command.system(cmd)
 
         return True
