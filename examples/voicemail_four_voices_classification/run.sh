@@ -2,6 +2,7 @@
 
 # sh run.sh --stage -1 --stop_stage 9
 # sh run.sh --stage -1 --stop_stage 9
+# sh run.sh --stage 0 --stop_stage 0
 
 # params
 system_version="windows";
@@ -10,6 +11,14 @@ stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
 work_dir="$(pwd)"
+file_dir="$(pwd)"
+final_model_name=cnn_voicemail_four_class
+
+# model params
+batch_size=64
+max_epochs=200
+save_top_k=10
+patience=5
 
 
 # parse options
@@ -41,7 +50,12 @@ while true; do
   esac
 done
 
+
+final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
+
+
 $verbose && echo "system_version: ${system_version}"
+
 
 if [ $system_version == "windows" ]; then
   #source /data/local/bin/TrainerPlatform/bin/activate
@@ -50,13 +64,95 @@ elif [ $system_version == "centos" ] || [ $system_version == "ubuntu" ]; then
   alias python3='/data/local/bin/TrainerPlatform/bin/python3'
 fi
 
+
+function search_best_ckpt() {
+  version="$1";
+  patience="$2";
+
+  cd "${file_dir}" || exit 1
+  last_epoch=$(ls "lightning_logs/${version}/checkpoints" | \
+               grep ckpt | awk 'END {print}' | \
+               awk -F'[=-]' '/epoch/ {print$2}')
+  target_epoch=$((last_epoch - patience))
+  target_file=null
+  for file in $(ls "lightning_logs/${version}/checkpoints" | grep ckpt | sort -r):
+  do
+    this_epoch=$(echo "${file}" | awk -F'[=-]' '/epoch/ {print$2}');
+
+    if [ "${this_epoch}" -le "${target_epoch}" ]; then
+      target_file="${file}";
+      break;
+    fi
+  done
+  if [ "${target_file}" == null ]; then
+    echo "no appropriate file found" && exit 1;
+    return 0;
+  fi
+  echo "${target_file}"
+}
+
+
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
-  $verbose && echo "stage 0: prepare data without irrelevant domain (create train.json, test.json file)"
+  $verbose && echo "stage 0: prepare data"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
-  --filename_patterns "D:/程序员/ASR数据集/voicemail/origin_wav/zh-TW/wav_segmented/*.wav"
-
+  --filename_patterns \
+  "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
+  "D:/programmer/asr_datasets/voicemail/origin_wav/en-US/wav_segmented/*/*.wav"
 
 fi
 
 
+if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
+  $verbose && echo "stage 1: create vocabulary"
+  cd "${work_dir}" || exit 1
+  python3 2.create_vocabulary.py \
+  --file_dir "${file_dir}"
+
+fi
+
+
+if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
+  $verbose && echo "stage 2: train model"
+  cd "${work_dir}" || exit 1
+  python3 3.train_model.py \
+  --file_dir "${file_dir}" \
+  --batch_size ${batch_size} \
+  --max_epochs ${max_epochs} \
+  --save_top_k ${save_top_k} \
+  --patience "${patience}" \
+  --train_dataset train.xlsx \
+  --test_dataset test.xlsx
+
+fi
+
+
+if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
+  $verbose && echo "stage 3: test model"
+
+  target_file=$(search_best_ckpt version_0 "${patience}");
+  test target_file || exit 1;
+
+  cd "${work_dir}" || exit 1
+
+  python3 4.test_model.py \
+  --file_dir "${file_dir}" \
+  --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
+  --train_dataset train.xlsx \
+  --test_dataset test.xlsx
+fi
+
+
+if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+  $verbose && echo "stage 4: export model"
+
+  target_file=$(search_best_ckpt version_0 "${patience}");
+  test target_file || exit 1;
+
+  cd "${work_dir}" || exit 1
+
+  python3 5.export_model.py \
+  --file_dir "${file_dir}" \
+  --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
+
+fi
