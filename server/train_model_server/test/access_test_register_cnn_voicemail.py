@@ -8,10 +8,15 @@ import requests
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host', default='127.0.0.1', type=str)
+    parser.add_argument(
+        '--host',
+        # default='127.0.0.1',
+        default='10.75.27.247',
+        type=str
+    )
     parser.add_argument('--port', default=9180, type=int)
     parser.add_argument('--language', default='id-ID', type=str)
-    parser.add_argument('--increase_number', default=9180, type=int)
+    parser.add_argument('--increase_number', default=5000, type=int)
 
     args = parser.parse_args()
     return args
