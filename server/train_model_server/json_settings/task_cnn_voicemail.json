@@ -1,4 +1,4 @@
 {
     "dataset_dir": "/data/tianxing/PycharmProjects/datasets/voicemail",
-    "languages": ["id-ID"]
+    "languages": ["id-ID", "zh-TW"]
 }
