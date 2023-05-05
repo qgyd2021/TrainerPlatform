@@ -4,6 +4,7 @@
 # sh run.sh --stage 3 --stop_stage 3 --system_version centos
 # sh run.sh --stage 3 --stop_stage 4
 # sh run.sh --stage 4 --stop_stage 4
+# sh run.sh --stage 3 --stop_stage 3 --system_version centos --file_folder_name task_cnn_voicemail_zh-TW
 
 # params
 system_version="windows";

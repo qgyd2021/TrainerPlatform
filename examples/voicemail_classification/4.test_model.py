@@ -249,7 +249,7 @@ class Model(pl.LightningModule):
 model = Model()
 if args.ckpt_path is not None:
     model = model.load_from_checkpoint(
-        args.ckpt_path,
+        file_dir / args.ckpt_path,
         map_location=torch.device('cpu')
     )
 model.eval()

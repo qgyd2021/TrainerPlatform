@@ -89,14 +89,23 @@ def register_cnn_voicemail_view_func():
         data_dir = os.path.join(settings.dataset_dir, language)
     interval = args.get('interval', 24 * 60 * 60)
 
-    task_name = 'task_cnn_voicemail_{}'.format(language)
+    threshold = 5 * 60 * 60
+    interval = threshold if interval < threshold else interval
+
+    task_name = 'task_cnn_voicemail_{}'.format(language).replace('-', '_').lower()
+
     settings.scheduler.add_job(
         id=task_name, func=TaskCnnVoicemailFunc(), args=[task_name, language, increase_number, data_dir],
         trigger='interval',
         seconds=interval,
     )
 
-    return task_name
+    result = {
+        'task_name': task_name,
+        'interval': interval,
+
+    }
+    return result
 
 
 if __name__ == '__main__':
