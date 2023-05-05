@@ -23,10 +23,12 @@ environment = EnvironmentManager(
 
 port = environment.get(key='port', default=9180, dtype=int)
 
-dataset_dir = environment.get(
-    key='dataset_dir', default=os.path.join(project_path, '../datasets/voicemail'), dtype=str
-)
 
+task_cnn_voicemail_json_settings_file = environment.get(
+    key='task_cnn_voicemail_json_settings_file',
+    default=os.path.join(project_path, 'server/train_model_server/json_settings/task_cnn_voicemail.json'),
+    dtype=str
+)
 
 # plugin
 scheduler = APScheduler()
