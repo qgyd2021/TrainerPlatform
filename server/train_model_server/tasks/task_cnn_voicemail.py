@@ -87,7 +87,7 @@ class TaskCnnVoicemailFunc(object):
                     final_model_name=self.get_final_model_name(language),
                     nohup_name=self.get_nohup_name(language)
                 ).strip()
-                cmd = re.sub(r'[\u0020]{4,}', '', cmd)
+                cmd = re.sub(r'[\u0020]{4,}', ' ', cmd)
 
                 logger.info(cmd)
                 if sys.platform not in ('win32', ):
