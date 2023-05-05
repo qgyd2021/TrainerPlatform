@@ -6,6 +6,7 @@ import json
 import logging
 import os
 from pathlib import Path
+import re
 import sys
 from typing import List
 
@@ -17,11 +18,31 @@ logger = logging.getLogger('server')
 
 
 class TaskCnnVoicemailFunc(object):
+    final_model_name = 'cnn_voicemail_{language}'
+
     def __init__(self):
         self.task_cnn_voicemail_to_last_count = defaultdict(int)
 
         self.dataset_dir: Path = None
         self.languages: List[str] = None
+
+    @staticmethod
+    def get_file_folder_name(language: str):
+        language = language.replace('-', '_').lower()
+        result = 'file_dir_{}'.format(language)
+        return result
+
+    @staticmethod
+    def get_final_model_name(language: str):
+        language = language.replace('-', '_').lower()
+        result = 'cnn_voicemail_{}'.format(language)
+        return result
+
+    @staticmethod
+    def get_nohup_name(language: str):
+        language = language.replace('-', '_').lower()
+        result = 'nohup_{}.out'.format(language)
+        return result
 
     def read_cnn_voicemail_settings(self, settings_file: str):
         with open(settings_file, 'rb') as f:
@@ -56,13 +77,17 @@ class TaskCnnVoicemailFunc(object):
                     --stage -1 --stop_stage 9 \
                     --system_version {system_version} \
                     --filename_patterns {filename_pattern1} \
-                    --file_folder_name {language} \
-                    --final_model_name {language} \
-                    > nohup_{language}.out &""".format(
+                    --file_folder_name {file_folder_name} \
+                    --final_model_name {final_model_name} \
+                    > {nohup_name} &""".format(
                     system_version='centos',
                     filename_pattern1=filename_pattern.replace(r'*', r'\*'),
-                    language=language.replace('-', '_').lower()
+                    language=language.replace('-', '_').lower(),
+                    file_folder_name=self.get_file_folder_name(language),
+                    final_model_name=self.get_final_model_name(language),
+                    nohup_name=self.get_nohup_name(language)
                 ).strip()
+                cmd = re.sub(r'[\u0020]{4,}', '', cmd)
 
                 logger.info(cmd)
                 if sys.platform not in ('win32', ):

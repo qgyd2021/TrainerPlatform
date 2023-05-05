@@ -25,7 +25,7 @@ logger = logging.getLogger('server')
 # 初始化服务
 flask_app = Flask(__name__)
 flask_app.add_url_rule(rule='/HeartBeat', view_func=heart_beat, methods=['GET', 'POST'], endpoint='HeartBeat')
-
+flask_app.add_url_rule(rule='/cnn_voicemail', view_func=heart_beat, methods=['GET', 'POST'], endpoint='CnnVoicemail')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

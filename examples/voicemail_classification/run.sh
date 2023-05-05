@@ -175,6 +175,6 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   cp "${file_dir}/trace_quant_model.zip" "${final_model_dir}/trace_quant_model.zip"
   cp "${file_dir}/script_model.zip" "${final_model_dir}/script_model.zip"
   cp "${file_dir}/script_quant_model.zip" "${final_model_dir}/script_quant_model.zip"
-  cp "${file_dir}/vocabulary" "${final_model_dir}/vocabulary"
+  cp -r "${file_dir}/vocabulary" "${final_model_dir}/vocabulary"
 
 fi
