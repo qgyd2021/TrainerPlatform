@@ -48,12 +48,15 @@ class TaskCnnVoicemailFunc(object):
 
         self.dataset_dir = Path(cnn_voicemail_settings['dataset_dir'])
         tasks = cnn_voicemail_settings['tasks']
+
+        languages = list()
         for task in tasks:
             language = task['language']
             start_count = task['start_count']
             if self.task_cnn_voicemail_to_last_count[language] < start_count:
                 self.task_cnn_voicemail_to_last_count[language] = start_count
-            self.languages.append(language)
+            languages.append(language)
+        self.languages = languages
 
     def __call__(self):
         self.read_cnn_voicemail_settings(settings_file=settings.task_cnn_voicemail_json_settings_file)
