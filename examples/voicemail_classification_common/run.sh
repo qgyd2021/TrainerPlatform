@@ -99,6 +99,7 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
 
   # /data/tianxing/PycharmProjects/datasets/voicemail/ja-JP/wav_finished/bell/*.wav
   python3 1.prepare_data.py \
+  --file_dir "${file_dir}" \
   --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/*/wav_finished/*/*.wav" \
 
 fi
