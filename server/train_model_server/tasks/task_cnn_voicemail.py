@@ -51,7 +51,8 @@ class TaskCnnVoicemailFunc(object):
         for task in tasks:
             language = task['language']
             start_count = task['start_count']
-            self.task_cnn_voicemail_to_last_count[language] = start_count
+            if self.task_cnn_voicemail_to_last_count[language] < start_count:
+                self.task_cnn_voicemail_to_last_count[language] = start_count
             self.languages.append(language)
 
     def __call__(self):
@@ -73,7 +74,7 @@ class TaskCnnVoicemailFunc(object):
             if this_count - last_count > 5000:
                 task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
 
-                self.task_cnn_voicemail_to_last_count[language] = len(filename_list)
+                self.task_cnn_voicemail_to_last_count[language] = this_count
 
                 cmd = """nohup \
                     sh run.sh \
@@ -92,7 +93,7 @@ class TaskCnnVoicemailFunc(object):
                 ).strip()
                 cmd = re.sub(r'[\u0020]{4,}', ' ', cmd)
 
-                logger.info(cmd)
+                logger.info('cmd: {}'.format(cmd))
                 if sys.platform not in ('win32', ):
                     Command.cd(task_work_dir)
                     Command.system(cmd)

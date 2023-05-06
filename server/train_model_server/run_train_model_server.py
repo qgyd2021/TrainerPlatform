@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import os
 import sys
@@ -47,9 +47,9 @@ if __name__ == '__main__':
         id='task_cnn_voicemail',
         func=TaskCnnVoicemailFunc(),
         trigger='interval',
-        seconds=5,
-        # seconds=5 * 60 * 60,
-        next_run_time=datetime.now()
+        # seconds=5,
+        seconds=5 * 60 * 60,
+        next_run_time=datetime.now() + timedelta(seconds=5)
 
     )
 
