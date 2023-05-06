@@ -1,4 +1,13 @@
 {
     "dataset_dir": "/data/tianxing/PycharmProjects/datasets/voicemail",
-    "languages": ["id-ID", "zh-TW"]
+    "tasks": [
+        {
+            "language": "id-ID",
+            "start_count": 1700
+        },
+        {
+            "language": "zh-TW",
+            "start_count": 2000
+        }
+    ]
 }

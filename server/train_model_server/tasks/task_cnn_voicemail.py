@@ -18,13 +18,11 @@ logger = logging.getLogger('server')
 
 
 class TaskCnnVoicemailFunc(object):
-    final_model_name = 'cnn_voicemail_{language}'
-
     def __init__(self):
         self.task_cnn_voicemail_to_last_count = defaultdict(int)
 
         self.dataset_dir: Path = None
-        self.languages: List[str] = None
+        self.languages: List[str] = list()
 
     @staticmethod
     def get_file_folder_name(language: str):
@@ -49,7 +47,12 @@ class TaskCnnVoicemailFunc(object):
             cnn_voicemail_settings = json.load(f)
 
         self.dataset_dir = Path(cnn_voicemail_settings['dataset_dir'])
-        self.languages = cnn_voicemail_settings['languages']
+        tasks = cnn_voicemail_settings['tasks']
+        for task in tasks:
+            language = task['language']
+            start_count = task['start_count']
+            self.task_cnn_voicemail_to_last_count[language] = start_count
+            self.languages.append(language)
 
     def __call__(self):
         self.read_cnn_voicemail_settings(settings_file=settings.task_cnn_voicemail_json_settings_file)

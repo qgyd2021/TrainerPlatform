@@ -16,3 +16,4 @@ librosa==0.8.1
 fugashi==1.1.2
 ipadic==1.0.0
 Flask-APScheduler==1.12.4
+cacheout==0.14.0

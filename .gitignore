@@ -13,9 +13,10 @@ trained_models/
 **/log
 **/logs
 **/output_dir
-**/output_dir*
 **/serialization_dir
 **/vocabulary
+**/*file_dir*
+**/*output_dir*
 
 **/*.bib
 **/*.bin
