@@ -21,7 +21,7 @@ def get_args():
 def main():
     args = get_args()
     file_dir = Path(args.file_dir)
-    file_dir.mkdir(exist_ok=True)
+    file_dir.mkdir(parents=True, exist_ok=True)
 
     vocabulary = Vocabulary()
 

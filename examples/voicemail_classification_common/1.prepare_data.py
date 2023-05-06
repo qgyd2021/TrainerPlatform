@@ -26,7 +26,7 @@ def get_args():
 
 def get_dataset(args):
     file_dir = Path(args.file_dir)
-    file_dir.mkdir(exist_ok=True)
+    file_dir.mkdir(parents=True, exist_ok=True)
 
     filename_patterns = args.filename_patterns
     print('filename_patterns: {}'.format(filename_patterns))
@@ -53,7 +53,10 @@ def get_dataset(args):
         for filename in tqdm(filename_list):
             path, fn = os.path.split(filename)
             basename, ext = os.path.splitext(fn)
-            root_path, folder = os.path.split(path)
+            path, folder = os.path.split(path)
+            path, _ = os.path.split(path)
+            path, language = os.path.split(path)
+
             if folder not in folder_to_label.keys():
                 continue
 
@@ -65,6 +68,7 @@ def get_dataset(args):
                 'filename': filename,
                 'folder': folder,
                 'label': label,
+                'language': language,
                 'random1': random1,
                 'random2': random2,
                 'flag': 'TRAIN' if random2 < 0.8 else 'TEST',

@@ -12,7 +12,7 @@ stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
 work_dir="$(pwd)"
-file_dir="$(pwd)"
+file_dir="$(pwd)/file_dir"
 final_model_name=cnn_voicemail_common
 
 # model params
@@ -97,8 +97,9 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data"
   cd "${work_dir}" || exit 1
 
+  # /data/tianxing/PycharmProjects/datasets/voicemail/ja-JP/wav_finished/bell/*.wav
   python3 1.prepare_data.py \
-  --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/*/*/*.wav" \
+  --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/*/wav_finished/*/*.wav" \
 
 fi
 
