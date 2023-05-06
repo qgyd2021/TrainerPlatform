@@ -54,8 +54,15 @@ def cnn_voicemail_view_func():
 
     service = get_cnn_voicemail_service_instance()
 
-    result = service.forward(signal, language)
+    pivot_table = service.get_pivot_table(language)
 
+    predicts = service.forward(signal, language)
+
+    result = {
+        'pivot_table': pivot_table,
+        'predicts': predicts,
+
+    }
     return result
 
 
