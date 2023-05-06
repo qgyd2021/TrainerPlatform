@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import argparse
+from datetime import datetime
 import logging
 import os
 import sys
@@ -45,7 +46,11 @@ if __name__ == '__main__':
     settings.scheduler.add_job(
         id='task_cnn_voicemail',
         func=TaskCnnVoicemailFunc(),
-        trigger='interval', seconds=5 * 60 * 60
+        trigger='interval',
+        seconds=5,
+        # seconds=5 * 60 * 60,
+        next_run_time=datetime.now()
+
     )
 
     # flask_app.run(
