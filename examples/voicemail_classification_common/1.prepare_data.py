@@ -31,18 +31,19 @@ def get_dataset(args):
     filename_patterns = args.filename_patterns
     print('filename_patterns: {}'.format(filename_patterns))
 
+    # white_noise, noise, voice
     folder_to_label = {
-        'bell': 'voicemail',
-        'white_noise': 'mute',
-        'low_white_noise': 'mute',
+        # 'bell': 'voicemail',
+        'white_noise': 'white_noise',
+        'low_white_noise': 'white_noise',
         'hight_white_noise': 'noise',
         'music': 'noise',
-        'mute': 'mute',
+        'mute': 'white_noise',
         'noise': 'noise',
-        'noise_mute': 'mute',
+        'noise_mute': 'white_noise',
         # 'special': 'voicemail',
         'voice': 'voice',
-        'voicemail': 'voicemail',
+        # 'voicemail': 'voicemail',
         # 'non_voicemail': 'non_voicemail',
     }
 

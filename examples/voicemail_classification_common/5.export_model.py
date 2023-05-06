@@ -15,7 +15,6 @@ sys.path.append(os.path.join(pwd, '../../'))
 
 import numpy as np
 import pytorch_lightning as pl
-from pytorch_lightning import Trainer
 import torch
 import torch.nn as nn
 from torch.nn import functional
@@ -249,45 +248,78 @@ class Model(pl.LightningModule):
 model = Model()
 if args.ckpt_path is not None:
     model = model.load_from_checkpoint(
-        args.ckpt_path,
+        file_dir / args.ckpt_path,
         map_location=torch.device('cpu')
     )
 model.eval()
-print(model)
+
+
+def export_state_dict():
+    torch.save(model.state_dict(), file_dir / 'pytorch_model.bin')
+    return
+
+
+def export_jit():
+    filename = os.path.join(project_path, 'datasets/test/0a4a881a-d686-4aaa-ac65-074ffb77f08a_en-US_1661709365.751234.wav')
+    inputs = train_dataset.filename_to_waveform(filename)
+    inputs = torch.unsqueeze(inputs, dim=0)
+    example_inputs = (inputs,)
+
+    # outputs = model.forward(inputs)
+
+    # 模型序列化
+    trace_model = torch.jit.trace(func=model, example_inputs=example_inputs, strict=False)
+    trace_model.save(file_dir / 'cnn_voicemail.pth')
+
+    # trace 方式. 将模型运行一遍, 以记录对张量的操作并生成图模型.
+    trace_model = torch.jit.trace(func=model.model, example_inputs=example_inputs, strict=False)
+    trace_model.save(file_dir / 'trace_model.zip')
+
+    # 量化
+    quantized_model = torch.quantization.quantize_dynamic(
+        model.model, {torch.nn.Linear}, dtype=torch.qint8
+    )
+    trace_quant_model = torch.jit.trace(func=quantized_model, example_inputs=example_inputs, strict=False)
+    trace_quant_model.save(file_dir / 'trace_quant_model.zip')
+
+    # script 方式. 通过解析代码来生成图模型, 相较于 trace 方式, 它可以处理 if 条件判断的情况.
+    script_model = torch.jit.script(obj=model.model)
+    script_model.save(file_dir / 'script_model.zip')
+
+    # 量化
+    quantized_model = torch.quantization.quantize_dynamic(
+        model.model, {torch.nn.Linear}, dtype=torch.qint8
+    )
+    script_quant_model = torch.jit.script(quantized_model)
+    script_quant_model.save(file_dir / 'script_quant_model.zip')
+    return
+
+
+def export_onnx():
+    """torch.stft 不能转 onnx"""
+    filename = os.path.join(project_path, 'datasets/test/0a4a881a-d686-4aaa-ac65-074ffb77f08a_en-US_1661709365.751234.wav')
+    inputs = train_dataset.filename_to_waveform(filename)
+    inputs = torch.unsqueeze(inputs, dim=0)
+    example_inputs = (inputs,)
+
+    trace_model = torch.jit.load(file_dir / 'trace_model.zip')
+
+    # torch.onnx.export 默认使用 trace 模式
+    # 转换为 onnx 模型
+    torch.onnx.export(
+        model=trace_model,
+        args=example_inputs,
+        f=file_dir / 'trace_model.onnx',
+        input_names=["inputs"],
+        output_names=["outputs"],
+    )
+    return
 
 
 def main():
-    import pandas as pd
-    from tqdm import tqdm
-
-    index_to_token = vocabulary.get_index_to_token_vocabulary(namespace='labels')
-
-    df = pd.read_excel(file_dir / args.full_dataset)
-
-    result = list()
-    for i, row in tqdm(df.iterrows(), total=len(df)):
-        filename = row['filename']
-        label = row['label']
-
-        inputs = train_dataset.filename_to_waveform(filename)
-        inputs = torch.unsqueeze(inputs, dim=0)
-
-        outputs = model.forward(inputs)
-        probs = outputs['probs']
-        label_idx = torch.argmax(probs, dim=-1)
-        label_idx = label_idx.numpy()
-
-        label_str = index_to_token[label_idx[0]]
-
-        row = dict(row)
-        row['predict'] = label_str
-        row['correct'] = 1 if label_str == label else 0
-
-        result.append(row)
-
-    result = pd.DataFrame(result)
-    result.to_excel(file_dir / args.output_filename, index=False, encoding='utf_8_sig')
-
+    export_state_dict()
+    export_jit()
+    # export_onnx()
     return
 
 

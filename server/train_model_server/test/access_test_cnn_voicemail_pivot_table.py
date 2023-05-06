@@ -14,8 +14,8 @@ from project_settings import project_path
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host', default='127.0.0.1', type=str)
-    # parser.add_argument('--host', default='10.75.27.247', type=str)
+    # parser.add_argument('--host', default='127.0.0.1', type=str)
+    parser.add_argument('--host', default='10.75.27.247', type=str)
     parser.add_argument('--port', default=9180, type=int)
     parser.add_argument(
         '--filename',

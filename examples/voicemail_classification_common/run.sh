@@ -13,7 +13,7 @@ stop_stage=9
 
 work_dir="$(pwd)"
 file_dir="$(pwd)"
-final_model_name=cnn_voicemail_four_class
+final_model_name=cnn_voicemail_common
 
 # model params
 batch_size=64
@@ -97,17 +97,8 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data"
   cd "${work_dir}" || exit 1
 
-#  python3 1.prepare_data.py \
-#  --filename_patterns \
-#  "D:/programmer/asr_datasets/voicemail/origin_wav/zh-TW/wav_segmented/*/*.wav" \
-#  "D:/programmer/asr_datasets/voicemail/origin_wav/en-US/wav_segmented/*/*.wav" \
-
   python3 1.prepare_data.py \
-  --filename_patterns \
-  "/data/tianxing/PycharmProjects/datasets/voicemail/en-US/*/*.wav" \
-  "/data/tianxing/PycharmProjects/datasets/voicemail/ja-JP/*/*.wav" \
-  "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/886/wav_segmented/*/*.wav" \
-  "/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/wav_segmented/*/*.wav"
+  --filename_patterns "/data/tianxing/PycharmProjects/datasets/voicemail/*/*/*.wav" \
 
 fi
 
@@ -164,4 +155,31 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
   --file_dir "${file_dir}" \
   --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
 
+fi
+
+
+if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+  $verbose && echo "stage 5: collect files"
+
+  mkdir -p "${final_model_dir}";
+
+  target_file=$(search_best_ckpt version_0 "${patience}");
+  test target_file || exit 1;
+
+  cd "${work_dir}" || exit 1;
+
+  cp "${file_dir}/evaluation.xlsx" "${final_model_dir}/evaluation.xlsx"
+  cp "${file_dir}/pytorch_model.bin" "${final_model_dir}/pytorch_model.bin"
+  cp "${file_dir}/cnn_voicemail.pth" "${final_model_dir}/cnn_voicemail.pth"
+#  cp "${file_dir}/trace_model.zip" "${final_model_dir}/trace_model.zip"
+#  cp "${file_dir}/trace_quant_model.zip" "${final_model_dir}/trace_quant_model.zip"
+#  cp "${file_dir}/script_model.zip" "${final_model_dir}/script_model.zip"
+#  cp "${file_dir}/script_quant_model.zip" "${final_model_dir}/script_quant_model.zip"
+  cp -r "${file_dir}/vocabulary" "${final_model_dir}/vocabulary"
+
+  cd "${final_model_dir}/.." || exit 1;
+
+  # zip -r cnn_voicemail_zh_tw.zip cnn_voicemail_zh_tw
+  zip -r "${final_model_name}.zip" "${final_model_name}"
+  rm -rf "${final_model_name}"
 fi

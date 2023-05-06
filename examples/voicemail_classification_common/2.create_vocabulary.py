@@ -24,11 +24,11 @@ def main():
     file_dir.mkdir(exist_ok=True)
 
     vocabulary = Vocabulary()
-    vocabulary.add_token_to_namespace('mute', 'labels')
+
+    # white_noise, noise, voice
+    vocabulary.add_token_to_namespace('white_noise', 'labels')
     vocabulary.add_token_to_namespace('noise', 'labels')
     vocabulary.add_token_to_namespace('voice', 'labels')
-    vocabulary.add_token_to_namespace('voicemail', 'labels')
-
     vocabulary.save_to_files(file_dir / 'vocabulary')
     return
 

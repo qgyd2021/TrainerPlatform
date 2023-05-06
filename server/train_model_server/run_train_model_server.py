@@ -53,8 +53,16 @@ if __name__ == '__main__':
     #     seconds=5,
     #     # seconds=5 * 60 * 60,
     #     next_run_time=datetime.now() + timedelta(seconds=5)
-    #
     # )
+
+    # run on 04:00:00 each day.
+    settings.scheduler.add_job(
+        id='task_cnn_voicemail',
+        func=TaskCnnVoicemailFunc(),
+        trigger='cron',
+        day_of_week='0-6',
+        hour=4,
+    )
 
     # flask_app.run(
     #     host='0.0.0.0',
