@@ -76,7 +76,7 @@ collate_fn = CollateFunction()
 
 train_dataset = WaveClassifierExcelDataset(
     vocab=vocabulary,
-    excel_file=args.train_dataset,
+    excel_file=file_dir / args.train_dataset,
     # excel_file='train_with_hard_case.xlsx',
     expected_sample_rate=8000,
 )
@@ -93,7 +93,7 @@ train_data_loader = DataLoader(
 
 test_dataset = WaveClassifierExcelDataset(
     vocab=vocabulary,
-    excel_file=args.test_dataset,
+    excel_file=file_dir / args.test_dataset,
     expected_sample_rate=8000,
 )
 test_data_loader = DataLoader(
