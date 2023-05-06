@@ -16,5 +16,15 @@ cnn_voicemail_schema = {
 }
 
 
+cnn_voicemail_pivot_table_schema = {
+    'type': 'object',
+    'required': ['language'],
+    'properties': {
+        'language': {
+            'type': 'string',
+        },
+    }
+}
+
 if __name__ == '__main__':
     pass

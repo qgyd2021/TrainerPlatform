@@ -43,13 +43,20 @@ class CnnVoicemailService(object):
             model = torch.jit.load((tgt_path / 'cnn_voicemail.pth').as_posix())
             vocabulary = Vocabulary.from_files((tgt_path / 'vocabulary').as_posix())
             evaluation = pd.read_excel((tgt_path / 'evaluation.xlsx').as_posix())
+
             pivot_table = pd.pivot_table(evaluation, index=['flag', 'label'], values=['correct'], aggfunc=['mean', 'count'])
-            pivot_table = str(pivot_table)
+            pivot_table = pivot_table.to_dict()
+
+            result = list()
+            for row in pivot_table[('mean', 'correct')].items():
+                result.append(('_'.join(row[0]), round(row[1], 4)))
+            for row in pivot_table[('count', 'correct')].items():
+                result.append(('_'.join(row[0]), int(row[1])))
 
             self.models.set(language, {
                 'model': model,
                 'vocabulary': vocabulary,
-                'pivot_table': pivot_table
+                'pivot_table': result,
             })
 
             shutil.rmtree(tgt_path)
@@ -62,8 +69,8 @@ class CnnVoicemailService(object):
             self.load_model(language)
             m = self.models.get(language)
 
-        result = m['pivot_table']
-        return result
+        pivot_table = m['pivot_table']
+        return pivot_table
 
     def forward(self, signal: np.ndarray, language: str) -> str:
         m = self.models.get(language)

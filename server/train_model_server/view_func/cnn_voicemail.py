@@ -13,7 +13,7 @@ from scipy.io import wavfile
 from server.exception import ExpectedError
 from server.flask_server.route_wrap.common_route_wrap import common_route_wrap
 from server.train_model_server.service.cnn_voicemail import get_cnn_voicemail_service_instance
-from server.train_model_server.schema.cnn_voicemail import cnn_voicemail_schema
+from server.train_model_server.schema.cnn_voicemail import cnn_voicemail_schema, cnn_voicemail_pivot_table_schema
 from toolbox.logging.misc import json_2_str
 
 logger = logging.getLogger('server')
@@ -54,16 +54,34 @@ def cnn_voicemail_view_func():
 
     service = get_cnn_voicemail_service_instance()
 
-    pivot_table = service.get_pivot_table(language)
-
     predicts = service.forward(signal, language)
 
-    result = {
-        'pivot_table': pivot_table,
-        'predicts': predicts,
+    return predicts
 
-    }
-    return result
+
+@common_route_wrap
+def cnn_voicemail_pivot_table_view_func():
+    args = request.json
+    logger.info('args: {}'.format(json_2_str(args)))
+
+    # 请求体校验
+    try:
+        jsonschema.validate(args, cnn_voicemail_pivot_table_schema)
+    except (jsonschema.exceptions.ValidationError,
+            jsonschema.exceptions.SchemaError, ) as e:
+        raise ExpectedError(
+            status_code=60401,
+            message='request body invalid. ',
+            detail=str(e)
+        )
+
+    language = args['language']
+
+    service = get_cnn_voicemail_service_instance()
+
+    pivot_table = service.get_pivot_table(language)
+    print(pivot_table)
+    return pivot_table
 
 
 if __name__ == '__main__':
