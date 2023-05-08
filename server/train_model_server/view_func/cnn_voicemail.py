@@ -15,7 +15,8 @@ from server.flask_server.route_wrap.common_route_wrap import common_route_wrap
 from server.train_model_server.service.cnn_voicemail import get_cnn_voicemail_by_language_service_instance, \
     get_cnn_voicemail_common_service_instance
 from server.train_model_server.schema.cnn_voicemail import cnn_voicemail_by_language_schema, \
-    cnn_voicemail_by_language_pivot_table_schema, cnn_voicemail_common_schema, cnn_voicemail_schema
+    cnn_voicemail_by_language_pivot_table_schema, cnn_voicemail_common_schema, \
+    cnn_voicemail_schema, cnn_voicemail_correction_schema
 from toolbox.logging.misc import json_2_str
 
 logger = logging.getLogger('server')
@@ -174,6 +175,30 @@ def cnn_voicemail_view_func():
     predicts2['prob'] = round(predicts2['prob'] * predicts1['prob'], 4)
     result.append(predicts2)
     return result
+
+
+@common_route_wrap
+def cnn_voicemail_correction_view_func():
+    args = request.json
+    logger.info('args: {}'.format(json_2_str(args)))
+
+    # 请求体校验
+    try:
+        jsonschema.validate(args, cnn_voicemail_correction_schema)
+    except (jsonschema.exceptions.ValidationError,
+            jsonschema.exceptions.SchemaError, ) as e:
+        raise ExpectedError(
+            status_code=60401,
+            message='request body invalid. ',
+            detail=str(e)
+        )
+
+    language = args['language']
+
+    service = get_cnn_voicemail_by_language_service_instance()
+    correction = service.get_correction(language)
+
+    return correction
 
 
 if __name__ == '__main__':

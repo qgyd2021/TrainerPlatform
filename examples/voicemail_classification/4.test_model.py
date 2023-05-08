@@ -276,12 +276,14 @@ def main():
         probs = outputs['probs']
         label_idx = torch.argmax(probs, dim=-1)
         label_idx = label_idx.numpy()
-
         label_str = index_to_token[label_idx[0]]
+
+        prob = probs[0][label_idx].detach().numpy()
 
         row = dict(row)
         row['predict'] = label_str
         row['correct'] = 1 if label_str == label else 0
+        row['prob'] = round(float(prob), 4)
 
         result.append(row)
 

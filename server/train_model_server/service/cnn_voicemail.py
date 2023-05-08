@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import time
-from typing import Dict
+from typing import Dict, List
 import zipfile
 
 from cacheout import Cache
@@ -44,23 +44,27 @@ class CnnVoicemailByLanguageService(object):
             vocabulary = Vocabulary.from_files((tgt_path / 'vocabulary').as_posix())
             evaluation = pd.read_excel((tgt_path / 'evaluation.xlsx').as_posix())
 
-            pivot_table = pd.pivot_table(evaluation, index=['flag', 'label'], values=['correct'], aggfunc=['mean', 'count'])
-            pivot_table = pivot_table.to_dict()
+            pivot_table_ = pd.pivot_table(evaluation, index=['flag', 'label'], values=['correct'], aggfunc=['mean', 'count'])
+            pivot_table_ = pivot_table_.to_dict()
 
-            result = list()
-            for row in pivot_table[('mean', 'correct')].items():
-                result.append(('_'.join(row[0]), round(row[1], 4)))
-            for row in pivot_table[('count', 'correct')].items():
-                result.append(('_'.join(row[0]), int(row[1])))
+            pivot_table = list()
+            for row in pivot_table_[('mean', 'correct')].items():
+                pivot_table.append(('_'.join(row[0]), round(row[1], 4)))
+            for row in pivot_table_[('count', 'correct')].items():
+                pivot_table.append(('_'.join(row[0]), int(row[1])))
+
+            correction = evaluation[evaluation['correct'] == 0]
+            correction = correction[['filename', 'correct', 'predict', 'label']]
+            correction = correction.to_dict(orient='records')
 
             self.models.set(language, {
                 'model': model,
                 'vocabulary': vocabulary,
-                'pivot_table': result,
+                'pivot_table': pivot_table,
+                'correction': correction,
             })
 
             shutil.rmtree(tgt_path)
-
         return
 
     def get_pivot_table(self, language: str):
@@ -71,6 +75,14 @@ class CnnVoicemailByLanguageService(object):
 
         pivot_table = m['pivot_table']
         return pivot_table
+
+    def get_correction(self, language: str) -> List[dict]:
+        m = self.models.get(language)
+        if m is None:
+            self.load_model(language)
+            m = self.models.get(language)
+        correction = m['correction']
+        return correction
 
     def forward(self, signal: np.ndarray, language: str) -> str:
         m = self.models.get(language)

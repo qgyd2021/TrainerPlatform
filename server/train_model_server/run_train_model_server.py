@@ -19,7 +19,8 @@ log.setup(log_directory=settings.log_directory)
 
 from server.flask_server.view_func.heart_beat import heart_beat
 from server.train_model_server.view_func.cnn_voicemail import cnn_voicemail_by_language_view_func, \
-    cnn_voicemail_by_language_pivot_table_view_func, cnn_voicemail_common_view_func, cnn_voicemail_view_func
+    cnn_voicemail_by_language_pivot_table_view_func, \
+    cnn_voicemail_common_view_func, cnn_voicemail_view_func, cnn_voicemail_correction_view_func
 from server.train_model_server.tasks.task_cnn_voicemail import TaskCnnVoicemailFunc, TaskCnnVoicemailCommonFunc
 
 logger = logging.getLogger('server')
@@ -32,6 +33,7 @@ flask_app.add_url_rule(rule='/cnn_voicemail_by_language', view_func=cnn_voicemai
 flask_app.add_url_rule(rule='/cnn_voicemail_by_language_pivot_table', view_func=cnn_voicemail_by_language_pivot_table_view_func, methods=['GET', 'POST'], endpoint='CnnVoicemailByLanguagePivotTable')
 flask_app.add_url_rule(rule='/cnn_voicemail_common', view_func=cnn_voicemail_common_view_func, methods=['GET', 'POST'], endpoint='CnnVoicemailCommon')
 flask_app.add_url_rule(rule='/cnn_voicemail', view_func=cnn_voicemail_view_func, methods=['GET', 'POST'], endpoint='CnnVoicemail')
+flask_app.add_url_rule(rule='/cnn_voicemail_correction', view_func=cnn_voicemail_correction_view_func, methods=['GET', 'POST'], endpoint='CnnVoicemailCorrection')
 
 
 if __name__ == '__main__':
