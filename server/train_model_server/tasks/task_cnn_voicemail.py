@@ -102,5 +102,54 @@ class TaskCnnVoicemailFunc(object):
                     Command.system(cmd)
 
 
+class TaskCnnVoicemailCommonFunc(object):
+    def __init__(self):
+        self.last_count = 0
+        self.increase_count = 5000
+        self.dataset_dir: Path = None
+
+    def read_cnn_voicemail_common_settings(self, settings_file: str):
+        with open(settings_file, 'rb') as f:
+            cnn_voicemail_common_settings = json.load(f)
+        self.last_count: int = cnn_voicemail_common_settings['start_count']
+        self.increase_count: int = cnn_voicemail_common_settings['increase_count']
+
+    def __call__(self):
+        self.read_cnn_voicemail_common_settings(settings_file=settings.task_cnn_voicemail_common_json_settings_file)
+
+        filename_pattern = self.dataset_dir / '*/wav_finished/*/*.wav'
+        filename_pattern = str(filename_pattern)
+        filename_list = glob(filename_pattern)
+
+        this_count = len(filename_list)
+
+        logger.debug(
+            'task cnn voicemail, last_count: {}, this_count: {}'.format(
+                self.last_count, len(filename_list)))
+
+        if this_count - self.last_count > self.increase_count:
+            task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
+
+            self.last_count = this_count
+
+            cmd = """nohup \
+                sh run.sh \
+                --stage -1 --stop_stage 9 \
+                --system_version {system_version} \
+                --file_folder_name {file_folder_name} \
+                > {nohup_name} &""".format(
+                system_version='centos',
+                file_folder_name='task_cnn_voicemail_common',
+                final_model_name='cnn_voicemail_common',
+                nohup_name='nohup_cnn_voicemail_common'
+            ).strip()
+            cmd = re.sub(r'[\u0020]{4,}', ' ', cmd)
+
+            logger.info('cmd: {}'.format(cmd))
+            if sys.platform not in ('win32', ):
+                Command.cd(task_work_dir)
+                Command.system(cmd)
+
+
 if __name__ == '__main__':
     pass

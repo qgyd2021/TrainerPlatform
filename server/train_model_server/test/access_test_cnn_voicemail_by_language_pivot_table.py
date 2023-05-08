@@ -31,7 +31,7 @@ def get_args():
 def main():
     args = get_args()
 
-    url = 'http://{host}:{port}/cnn_voicemail'.format(
+    url = 'http://{host}:{port}/cnn_voicemail_by_language_pivot_table'.format(
         host=args.host,
         port=args.port,
     )
@@ -40,26 +40,13 @@ def main():
         'Content-Type': 'application/json'
     }
 
-    # filename = args.filename
-    # filename = r'D:\Users\tianx\PycharmProjects\TrainerPlatform\datasets\voicemail\zh-TW\voicemail\00a8bf40-4b07-41ab-8992-034ef00963b3_zh-TW_1676022683560.wav'
-    filename = r'D:\Users\tianx\PycharmProjects\TrainerPlatform\datasets\voicemail\zh-TW\voice\00a310c0-8f9e-4f47-9b78-45ed2ed834e5_zh-TW_1678439795387.wav'
-
     # language = args.language
     language = 'zh-TW'
 
-    call_id = hashlib.md5(filename.encode(encoding='UTF-8')).hexdigest()
-    call_id = '{}_{}'.format(call_id, time.time())
-
-    with open(filename, 'rb') as f:
-        data = f.read()
-
-    base64string = base64.b64encode(data).decode('utf-8')
-
     data = {
         'language': language,
-        'call_id': 'access_test_call_id_{}'.format(call_id),
-        'scene_id': 'access_test_scene_id_{}'.format(call_id),
-        'signal': base64string,
+        'call_id': 'access_test_call_id_cnn_voicemail_pivot_table',
+        'scene_id': 'access_test_scene_id_cnn_voicemail_pivot_table',
         'verbose': True,
     }
 

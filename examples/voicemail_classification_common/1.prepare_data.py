@@ -33,7 +33,7 @@ def get_dataset(args):
 
     # white_noise, noise, voice
     folder_to_label = {
-        # 'bell': 'voicemail',
+        'bell': 'bell',
         'white_noise': 'white_noise',
         'low_white_noise': 'white_noise',
         'hight_white_noise': 'noise',
@@ -43,7 +43,7 @@ def get_dataset(args):
         'noise_mute': 'white_noise',
         # 'special': 'voicemail',
         'voice': 'voice',
-        # 'voicemail': 'voicemail',
+        'voicemail': 'voicemail',
         # 'non_voicemail': 'non_voicemail',
     }
 

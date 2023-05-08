@@ -12,7 +12,7 @@ stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
 work_dir="$(pwd)"
-file_dir="$(pwd)/file_dir"
+file_folder_name=file_folder_name
 final_model_name=cnn_voicemail_common
 
 # model params
@@ -52,6 +52,7 @@ while true; do
 done
 
 
+file_dir="${work_dir}/${file_folder_name}"
 final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
 
 
