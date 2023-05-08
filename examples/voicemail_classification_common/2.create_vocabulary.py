@@ -32,6 +32,7 @@ def main():
     vocabulary.add_token_to_namespace('bell', 'labels')
     vocabulary.add_token_to_namespace('mute', 'labels')
     vocabulary.add_token_to_namespace('noise_mute', 'labels')
+    vocabulary.add_token_to_namespace('music', 'labels')
 
     vocabulary.save_to_files(file_dir / 'vocabulary')
     return
