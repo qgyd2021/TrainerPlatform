@@ -14,6 +14,7 @@ stop_stage=9
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
 final_model_name=cnn_voicemail_common
+nohup_name=nohup.out
 
 # model params
 batch_size=64
@@ -185,4 +186,12 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   # zip -r cnn_voicemail_zh_tw.zip cnn_voicemail_zh_tw
   zip -r "${final_model_name}.zip" "${final_model_name}"
   rm -rf "${final_model_name}"
+
+fi
+
+
+if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
+  $verbose && echo "stage 6: clear file_dir"
+  rm -rf "${file_dir}";
+  rm -rf "${nohup_name}";
 fi

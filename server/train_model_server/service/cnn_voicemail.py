@@ -28,7 +28,7 @@ class CnnVoicemailByLanguageService(object):
         self.models = Cache(maxsize=256, ttl=1 * 60 * 60, timer=time.time)
 
     def load_model(self, language: str):
-        logger.info('load model: {}'.format(language))
+        logger.info('load cnn voicemail model of language: {}'.format(language))
         zip_file = self.trained_models_dir / '{}.zip'.format(TaskCnnVoicemailFunc.get_final_model_name(language))
         if not os.path.exists(zip_file):
             raise ExpectedError(
@@ -119,7 +119,7 @@ class CnnVoicemailCommonService(object):
         self.models = Cache(maxsize=256, ttl=1 * 60 * 60, timer=time.time)
 
     def load_model(self, key: str = 'default'):
-        logger.info('load model')
+        logger.info('load cnn voicemail common model')
         zip_file = self.trained_models_dir / 'cnn_voicemail_common.zip'
         if not os.path.exists(zip_file):
             raise ExpectedError(
