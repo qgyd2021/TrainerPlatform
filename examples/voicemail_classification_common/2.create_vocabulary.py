@@ -25,12 +25,14 @@ def main():
 
     vocabulary = Vocabulary()
 
-    # white_noise, noise, voice
     vocabulary.add_token_to_namespace('white_noise', 'labels')
     vocabulary.add_token_to_namespace('voicemail', 'labels')
     vocabulary.add_token_to_namespace('voice', 'labels')
     vocabulary.add_token_to_namespace('noise', 'labels')
     vocabulary.add_token_to_namespace('bell', 'labels')
+    vocabulary.add_token_to_namespace('mute', 'labels')
+    vocabulary.add_token_to_namespace('noise_mute', 'labels')
+
     vocabulary.save_to_files(file_dir / 'vocabulary')
     return
 
