@@ -171,7 +171,7 @@ def cnn_voicemail_view_func():
 
     service2 = get_cnn_voicemail_common_service_instance()
     predicts2 = service2.forward(signal)
-    predicts2['prob'] = predicts2['prob'] * predicts1['prob']
+    predicts2['prob'] = round(predicts2['prob'] * predicts1['prob'], 4)
     result.append(predicts2)
     return result
 
