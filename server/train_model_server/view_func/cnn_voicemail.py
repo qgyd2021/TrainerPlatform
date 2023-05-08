@@ -165,8 +165,8 @@ def cnn_voicemail_view_func():
         predicts1 = service1.forward(signal, language)
     except ExpectedError:
         predicts1 = {'prob': 1.0, 'label': 'non_voicemail'}
-    # result.append(predicts1)
     if predicts1['label'] == 'voicemail':
+        result.append(predicts1)
         return result
 
     service2 = get_cnn_voicemail_common_service_instance()
