@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -1 --stop_stage 9
-# sh run.sh --stage -1 --stop_stage 9 --system_version centos --file_folder_name task_cnn_voicemail_zh_tw
+# sh run.sh --stage -1 --stop_stage 9 --system_version centos --file_folder_name task_cnn_voicemail_id_id
 # sh run.sh --stage 3 --stop_stage 4
 # sh run.sh --stage 4 --stop_stage 4
-# sh run.sh --stage 3 --stop_stage 3 --system_version centos --file_folder_name task_cnn_voicemail_zh_tw
+# sh run.sh --stage 3 --stop_stage 3 --system_version centos --file_folder_name task_cnn_voicemail_id_id
 
 # params
 system_version="windows";
@@ -15,7 +15,7 @@ stop_stage=9
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
 final_model_name=cnn_voicemail_tw
-filename_patterns="/data/tianxing/PycharmProjects/datasets/voicemail/zh-TW/wav_finished/*/*.wav"
+filename_patterns="/data/tianxing/PycharmProjects/datasets/voicemail/id-ID/wav_finished/*/*.wav"
 nohup_name=nohup.out
 
 # model params
