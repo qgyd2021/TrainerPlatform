@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -1 --stop_stage 9
-# sh run.sh --stage -1 --stop_stage 9 --system_version centos --file_folder_name task_cnn_voicemail_id_id
+# sh run.sh --stage -1 --stop_stage 5 --system_version centos --file_folder_name task_cnn_voicemail_id_id --final_model_name cnn_voicemail_id_id
 # sh run.sh --stage 3 --stop_stage 4
 # sh run.sh --stage 4 --stop_stage 4
 # sh run.sh --stage 3 --stop_stage 3 --system_version centos --file_folder_name task_cnn_voicemail_id_id
@@ -14,7 +14,7 @@ stop_stage=9
 
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
-final_model_name=cnn_voicemail_tw
+final_model_name=final_model_name
 filename_patterns="/data/tianxing/PycharmProjects/datasets/voicemail/id-ID/wav_finished/*/*.wav"
 nohup_name=nohup.out
 
@@ -182,8 +182,8 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   cd "${final_model_dir}/.." || exit 1;
 
   if [ -e "${final_model_name}.zip" ]; then
-    rm -rf "${final_model_name}.zip.backup"
-    mv "${final_model_name}.zip" "${final_model_name}.zip.backup"
+    rm -rf "${final_model_name}_backup.zip"
+    mv "${final_model_name}.zip" "${final_model_name}_backup.zip"
   fi
   # zip -r cnn_voicemail_zh_tw.zip cnn_voicemail_zh_tw
   zip -r "${final_model_name}.zip" "${final_model_name}"

@@ -31,6 +31,7 @@ class CnnVoicemailByLanguageService(object):
         logger.info('load cnn voicemail model of language: {}'.format(language))
         zip_file = self.trained_models_dir / '{}.zip'.format(TaskCnnVoicemailFunc.get_final_model_name(language))
         if not os.path.exists(zip_file):
+            logger.info('no cnn voicemail model for language: {}'.format(language))
             raise ExpectedError(
                 status_code=60401,
                 message='invalid language: {}'.format(language),

@@ -184,8 +184,8 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   cd "${final_model_dir}/.." || exit 1;
 
   if [ -e "${final_model_name}.zip" ]; then
-    rm -rf "${final_model_name}.zip.backup"
-    mv "${final_model_name}.zip" "${final_model_name}.zip.backup"
+    rm -rf "${final_model_name}_backup.zip"
+    mv "${final_model_name}.zip" "${final_model_name}_backup.zip"
   fi
 
   # zip -r cnn_voicemail_zh_tw.zip cnn_voicemail_zh_tw
