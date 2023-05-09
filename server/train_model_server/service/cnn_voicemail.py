@@ -28,7 +28,6 @@ class CnnVoicemailByLanguageService(object):
         self.models = Cache(maxsize=256, ttl=1 * 60 * 60, timer=time.time)
 
     def load_model(self, language: str):
-        logger.info('load cnn voicemail model of language: {}'.format(language))
         zip_file = self.trained_models_dir / '{}.zip'.format(TaskCnnVoicemailFunc.get_final_model_name(language))
         if not os.path.exists(zip_file):
             logger.info('no cnn voicemail model for language: {}'.format(language))
@@ -36,6 +35,8 @@ class CnnVoicemailByLanguageService(object):
                 status_code=60401,
                 message='invalid language: {}'.format(language),
             )
+        logger.info('load cnn voicemail model of language: {}'.format(language))
+
         with zipfile.ZipFile(zip_file, 'r') as f_zip:
             out_root = Path(tempfile.gettempdir()) / 'cnn_voicemail'
             out_root.mkdir(parents=True, exist_ok=True)
