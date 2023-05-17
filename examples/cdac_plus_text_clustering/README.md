@@ -10,3 +10,8 @@
 
 ```
 
+```text
+https://github.com/thuiar/CDAC-plus
+https://arxiv.org/abs/1911.08891
+
+```
