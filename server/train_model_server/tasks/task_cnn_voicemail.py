@@ -130,7 +130,7 @@ class TaskCnnVoicemailCommonFunc(object):
                 self.last_count, len(filename_list)))
 
         if this_count - self.last_count > self.increase_count:
-            task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
+            task_work_dir = os.path.join(project_path, 'examples/voicemail_classification_common')
 
             self.last_count = this_count
 
