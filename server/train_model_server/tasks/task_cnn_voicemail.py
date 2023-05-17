@@ -104,13 +104,15 @@ class TaskCnnVoicemailFunc(object):
 
 class TaskCnnVoicemailCommonFunc(object):
     def __init__(self):
+        self.dataset_dir: Path = None
         self.last_count = 0
         self.increase_count = 5000
-        self.dataset_dir: Path = None
 
     def read_cnn_voicemail_common_settings(self, settings_file: str):
         with open(settings_file, 'rb') as f:
             cnn_voicemail_common_settings = json.load(f)
+
+        self.dataset_dir = Path(cnn_voicemail_common_settings['dataset_dir'])
         self.last_count: int = cnn_voicemail_common_settings['start_count']
         self.increase_count: int = cnn_voicemail_common_settings['increase_count']
 
