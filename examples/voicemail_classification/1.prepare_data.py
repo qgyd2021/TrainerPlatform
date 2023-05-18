@@ -33,6 +33,7 @@ def get_dataset(args):
 
     folder_to_label = {
         'bell': 'voicemail',
+        'white_noise': 'non_voicemail',
         'low_white_noise': 'non_voicemail',
         'hight_white_noise': 'non_voicemail',
         'music': 'non_voicemail',

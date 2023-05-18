@@ -36,7 +36,7 @@ def get_dataset(args):
         'bell': 'bell',
         'white_noise': 'white_noise',
         'low_white_noise': 'white_noise',
-        'hight_white_noise': 'noise',
+        'high_white_noise': 'noise',
         'music': 'music',
         'mute': 'mute',
         'noise': 'noise',

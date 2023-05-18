@@ -126,7 +126,7 @@ class TaskCnnVoicemailCommonFunc(object):
         this_count = len(filename_list)
 
         logger.debug(
-            'task cnn voicemail, last_count: {}, this_count: {}'.format(
+            'task cnn voicemail common, last_count: {}, this_count: {}'.format(
                 self.last_count, len(filename_list)))
 
         if this_count - self.last_count > self.increase_count:
