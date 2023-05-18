@@ -2,8 +2,16 @@
     "dataset_dir": "/data/tianxing/PycharmProjects/datasets/voicemail",
     "tasks": [
         {
+            "language": "es-MX",
+            "start_count": 0
+        },
+        {
             "language": "id-ID",
             "start_count": 7000
+        },
+        {
+            "language": "th-TH",
+            "start_count": 0
         },
         {
             "language": "zh-TW",
