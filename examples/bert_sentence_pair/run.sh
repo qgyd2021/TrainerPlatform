@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 # params
 system_version="windows";
 verbose=true;
@@ -10,7 +9,7 @@ stop_stage=9
 
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
-
+final_model_name=final_model_name
 
 # parse options
 while true; do
@@ -42,6 +41,7 @@ while true; do
 done
 
 file_dir="${work_dir}/${file_folder_name}"
+final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
 
 
 $verbose && echo "system_version: ${system_version}"
@@ -51,13 +51,4 @@ if [ $system_version == "windows" ]; then
   alias python3='C:/Users/tianx/PycharmProjects/virtualenv/TrainerPlatform/Scripts/python.exe'
 elif [ $system_version == "centos" ] || [ $system_version == "ubuntu" ]; then
   alias python3='/data/local/bin/TrainerPlatform/bin/python3'
-fi
-
-
-if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
-  $verbose && echo "stage 0: prepare data"
-  cd "${work_dir}" || exit 1
-  python3 1.prepare_data.py \
-  --file_dir "${file_dir}" \
-
 fi

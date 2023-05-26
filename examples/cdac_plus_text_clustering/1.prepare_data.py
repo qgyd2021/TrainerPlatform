@@ -1,18 +1,38 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+import argparse
 import json
+import os
 import random
+import sys
+
+pwd = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.join(pwd, '../../'))
 
 import pandas as pd
+from tqdm import tqdm
 
 
-def demo0():
-    filename = r'D:\Users\tianx\PycharmProjects\PyTorch\练习实例\文本分类\层级文本分类\意图分类\意图分类 - 汉语.xlsx'
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--intent_classification_xlsx',
+        default='datasets/basic_intent_classification/intent_classification_cn.xlsx',
+        type=str
+    )
+    parser.add_argument('--train_labeled', default='train_labeled.json', type=str)
+    parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
+    parser.add_argument('--train_all', default='train_all.json', type=str)
 
-    df = pd.read_excel(filename)
+    args = parser.parse_args()
+    return args
+
+
+def make_dataset(args):
+    df = pd.read_excel(args.intent_classification_xlsx)
 
     dataset = list()
-    for i, row in df.iterrows():
+    for i, row in tqdm(df.iterrows(), total=len(df)):
         text = row['text']
         label = row['label1']
         selected = row['selected']
@@ -37,14 +57,17 @@ def demo0():
     return
 
 
-def demo1():
+def main():
+    args = get_args()
+
+    make_dataset(args)
     df = pd.read_excel('dataset.xlsx')
 
-    train_labeled_f = open('train_labeled.json', 'w', encoding='utf-8')
-    valid_labeled_f = open('valid_labeled.json', 'w', encoding='utf-8')
-    train_all_f = open('train_all.json', 'w', encoding='utf-8')
+    train_labeled_f = open(args.train_labeled, 'w', encoding='utf-8')
+    valid_labeled_f = open(args.valid_labeled, 'w', encoding='utf-8')
+    train_all_f = open(args.train_all, 'w', encoding='utf-8')
 
-    for i, row in df.iterrows():
+    for i, row in tqdm(df.iterrows(), total=len(df)):
         text = row['text']
         label = row['label']
         selected = row['selected']
@@ -76,5 +99,4 @@ def demo1():
 
 
 if __name__ == '__main__':
-    # demo0()
-    demo1()
+    main()

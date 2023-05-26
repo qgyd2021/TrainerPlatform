@@ -3,11 +3,11 @@
     "tasks": [
         {
             "language": "es-MX",
-            "start_count": 0
+            "start_count": 5000
         },
         {
             "language": "id-ID",
-            "start_count": 0
+            "start_count": 7000
         },
         {
             "language": "th-TH",
@@ -15,7 +15,7 @@
         },
         {
             "language": "zh-TW",
-            "start_count": 0
+            "start_count": 20000
         }
     ]
 }

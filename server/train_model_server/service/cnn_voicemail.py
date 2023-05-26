@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-import pandas as pd
 from pathlib import Path
 import shutil
 import tempfile
@@ -12,12 +11,13 @@ import zipfile
 
 from cacheout import Cache
 import numpy as np
+import pandas as pd
 import torch
 
-from server.train_model_server.tasks.task_cnn_voicemail import TaskCnnVoicemailFunc
-from toolbox.torch.utils.data.vocabulary import Vocabulary
-from server.train_model_server import settings
 from server.exception import ExpectedError
+from server.train_model_server.tasks.task_cnn_voicemail import TaskCnnVoicemailFunc
+from server.train_model_server import settings
+from toolbox.torch.utils.data.vocabulary import Vocabulary
 
 logger = logging.getLogger('server')
 
@@ -35,7 +35,7 @@ class CnnVoicemailByLanguageService(object):
                 status_code=60401,
                 message='invalid language: {}'.format(language),
             )
-        logger.info('load cnn voicemail model of language: {}'.format(language))
+        logger.info('loading cnn voicemail model of language: {}'.format(language))
 
         with zipfile.ZipFile(zip_file, 'r') as f_zip:
             out_root = Path(tempfile.gettempdir()) / 'cnn_voicemail'

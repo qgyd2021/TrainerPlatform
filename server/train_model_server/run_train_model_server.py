@@ -18,6 +18,8 @@ from server.train_model_server import settings
 log.setup(log_directory=settings.log_directory)
 
 from server.flask_server.view_func.heart_beat import heart_beat
+from server.train_model_server.view_func.basic_intent import basic_intent_by_language_view_func, \
+    basic_intent_by_language_pivot_table_view_func
 from server.train_model_server.view_func.cnn_voicemail import cnn_voicemail_by_language_view_func, \
     cnn_voicemail_by_language_pivot_table_view_func, \
     cnn_voicemail_common_view_func, cnn_voicemail_view_func, cnn_voicemail_correction_view_func
@@ -34,6 +36,9 @@ flask_app.add_url_rule(rule='/cnn_voicemail_by_language_pivot_table', view_func=
 flask_app.add_url_rule(rule='/cnn_voicemail_common', view_func=cnn_voicemail_common_view_func, methods=['GET', 'POST'], endpoint='CnnVoicemailCommon')
 flask_app.add_url_rule(rule='/cnn_voicemail', view_func=cnn_voicemail_view_func, methods=['GET', 'POST'], endpoint='CnnVoicemail')
 flask_app.add_url_rule(rule='/cnn_voicemail_correction', view_func=cnn_voicemail_correction_view_func, methods=['GET', 'POST'], endpoint='CnnVoicemailCorrection')
+
+flask_app.add_url_rule(rule='/basic_intent_by_language', view_func=basic_intent_by_language_view_func, methods=['GET', 'POST'], endpoint='BasicIntentByLanguage')
+flask_app.add_url_rule(rule='/basic_intent_by_language_pivot_table', view_func=basic_intent_by_language_pivot_table_view_func, methods=['GET', 'POST'], endpoint='BasicIntentByLanguagePivotTable')
 
 
 if __name__ == '__main__':

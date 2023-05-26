@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# sh run.sh --stage -1 --stop_stage 5 --system_version windows
 
 # params
 system_version="windows";
@@ -7,9 +8,10 @@ verbose=true;
 stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
-
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
+final_model_name=final_model_name
+intent_classification_xlsx=D:/Users/tianx/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
 
 
 # parse options
@@ -53,11 +55,11 @@ elif [ $system_version == "centos" ] || [ $system_version == "ubuntu" ]; then
   alias python3='/data/local/bin/TrainerPlatform/bin/python3'
 fi
 
-
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
   --file_dir "${file_dir}" \
+  --intent_classification_xlsx "${intent_classification_xlsx}" \
 
 fi
