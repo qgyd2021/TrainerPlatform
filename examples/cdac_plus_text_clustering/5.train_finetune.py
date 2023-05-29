@@ -50,6 +50,7 @@ def get_args():
     parser.add_argument('--learning_rate', default=5e-5, type=float)
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
     parser.add_argument('--num_serialized_models_to_keep', default=10, type=int)
+    parser.add_argument('--patience', default=5, type=int)
     parser.add_argument('--serialization_dir', default='finetuning', type=str)
     parser.add_argument('--pretrain_model_filename', default='pretrain/pretrain_epoch_44.bin', required=True, type=str)
     parser.add_argument('--kmeans_cluster_centers_pkl_filename', default=None, type=str)
@@ -415,10 +416,9 @@ def main():
         t_total=t_total
     )
 
-    model_best = None
-    nmi_best = 0
-    wait = 0
-    patient = 5
+    best_model = None
+    best_nmi: float = None
+    patience_count = 0
     y_pred_last = np.copy(cluster_centers_)
     model_filename_list = list()
     unknown_label = vocabulary.get_token_index(
@@ -465,17 +465,6 @@ def main():
             y_pred_.detach().numpy(),
         )
 
-        # early stop
-        if scores['NMI'] > nmi_best:
-            model_best = copy.deepcopy(model)
-            wait = 0
-            nmi_best = scores['NMI']
-        else:
-            wait += 1
-            if wait > patient:
-                model = model_best
-                break
-
         delta_label = np.sum(y_pred.detach().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
         y_pred_last = np.copy(y_pred)
         if idx_epoch > 0 and delta_label < 0.001:
@@ -483,7 +472,7 @@ def main():
             break
 
         metrics = {
-            'nmi_best': nmi_best,
+            'best_nmi': best_nmi,
             'delta_label': round(delta_label, 4),
             **scores,
         }
@@ -525,6 +514,23 @@ def main():
             model_filename_to_delete = model_filename_list.pop(0)
             os.remove(model_filename_to_delete)
         torch.save(model.state_dict(), model_filename)
+
+        # early stop
+        if best_model is None or best_nmi is None:
+            best_model = copy.deepcopy(model)
+            best_nmi = scores['NMI']
+            model_filename = os.path.join(args.serialization_dir, 'best.bin')
+            torch.save(model.state_dict(), model_filename)
+        elif scores['NMI'] > best_nmi:
+            best_model = copy.deepcopy(model)
+            best_nmi = scores['NMI']
+            model_filename = os.path.join(args.serialization_dir, 'best.bin')
+            torch.save(model.state_dict(), model_filename)
+            patience_count = 0
+        elif patience_count >= args.patience:
+            break
+        else:
+            patience_count += 1
 
     return
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -2 --stop_stage 5 --system_version windows
-# sh run.sh --stage 0 --stop_stage 5 --system_version centos
+# sh run.sh --stage 3 --stop_stage 5 --system_version centos
 
 # params
 system_version="windows";
@@ -10,7 +10,6 @@ stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
 work_dir="$(pwd)"
-file_folder_name=file_folder_name
 basic_intent_classification_datasets_dir=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification
 intent_classification_xlsx=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
 pretrained_bert_model_name=chinese-bert-wwm-ext

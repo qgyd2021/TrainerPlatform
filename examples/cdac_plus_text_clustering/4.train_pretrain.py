@@ -540,6 +540,8 @@ def main():
             os.remove(model_filename_to_delete)
         torch.save(model.state_dict(), model_filename)
 
+        model_filename = os.path.join(args.serialization_dir, 'best.bin')
+        torch.save(model.state_dict(), model_filename)
     return
 
 
