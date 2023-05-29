@@ -34,7 +34,7 @@ from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainC
 from toolbox.torchtext.models.text_clustering.cdac_plus import StudentsTDistribution, AuxiliaryTargetDistribution
 from toolbox.torchtext.models.text_clustering.utils import clustering_score
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 
 def get_args():

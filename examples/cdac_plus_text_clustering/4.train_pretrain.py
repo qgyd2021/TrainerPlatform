@@ -36,7 +36,7 @@ from toolbox.torch.utils.data.tokenizers.pretrained_bert_tokenizer import Pretra
 from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainClustering, CDACPlus
 from toolbox.torchtext.models.text_clustering.utils import clustering_score
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 
 def get_args():
