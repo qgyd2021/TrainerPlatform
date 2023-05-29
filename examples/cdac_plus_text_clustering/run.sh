@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# sh run.sh --stage -1 --stop_stage 5 --system_version windows
-# sh run.sh --stage -1 --stop_stage 5 --system_version centos
+# sh run.sh --stage -2 --stop_stage 5 --system_version windows
+# sh run.sh --stage 0 --stop_stage 5 --system_version centos
 
 # params
 system_version="windows";
@@ -161,7 +161,7 @@ fi
 if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   $verbose && echo "stage 5: gen vector"
   cd "${work_dir}" || exit 1
-  python3 5.train_fine_tune.py \
+  python3 6.gen_vector.py \
   --pretrained_model_dir "${pretrained_model_dir}"
 
 fi

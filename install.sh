@@ -41,6 +41,7 @@ if [ $system_version == "centos" ]; then
   cd "${work_dir}" || exit 1;
   sh ./script/install_python.sh --system_version "centos" --python_version "${python_version}"
 
+  # source /data/local/bin/TrainerPlatform/bin/activate
   /usr/local/python-${python_version}/bin/pip3 install virtualenv
   mkdir -p /data/local/bin
   cd /data/local/bin || exit 1;
