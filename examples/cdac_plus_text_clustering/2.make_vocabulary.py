@@ -22,8 +22,7 @@ def get_args():
         type=str
     )
     parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
-    parser.add_argument('--train_labeled', default='train_labeled.json', type=str)
-    parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
+    parser.add_argument('--train_all', default='train_all.json', type=str)
     args = parser.parse_args()
     return args
 
@@ -33,17 +32,9 @@ def main():
 
     model_name = args.pretrained_model_dir
 
-    tokenizer = PretrainedBertTokenizer(model_name)
-
     vocabulary = Vocabulary(non_padded_namespaces=['tokens', 'labels'])
 
-    with open(args.train_labeled, 'r', encoding='utf-8') as f:
-        for row in f:
-            row = json.loads(row)
-            label = row['label']
-            vocabulary.add_token_to_namespace(label, namespace='labels')
-
-    with open(args.valid_labeled, 'r', encoding='utf-8') as f:
+    with open(args.train_all, 'r', encoding='utf-8') as f:
         for row in f:
             row = json.loads(row)
             label = row['label']

@@ -42,6 +42,11 @@ def make_dataset(args):
         if pd.isna(text):
             continue
 
+        if pd.isna(selected):
+            selected = None
+        else:
+            selected = int(selected)
+
         dataset.append({
             'text': text,
             'label': label if selected == 1 else '无关领域',
