@@ -343,8 +343,6 @@ def main():
         if "encoder.layer.11" in name or "pooler" in name:
             param.requires_grad = True
 
-    # print(bert_for_constrain_clustering)
-
     model = CDACPlus(
         backbone=bert_for_constrain_clustering,
         hidden_size=768,

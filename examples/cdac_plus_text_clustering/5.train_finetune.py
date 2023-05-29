@@ -319,7 +319,7 @@ def main():
     # for batch in train_data_loader:
     #     print(batch)
 
-    # Freezing all transformer (except the last layer)
+    # train all transformer
     bert_for_constrain_clustering = BertForConstrainClustering.from_pretrained(model_name)
 
     model = CDACPlus(
