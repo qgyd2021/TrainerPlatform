@@ -13,8 +13,10 @@ work_dir="$(pwd)"
 file_folder_name=file_folder_name
 basic_intent_classification_datasets_dir=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification
 intent_classification_xlsx=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
+pretrained_bert_model_name=chinese-bert-wwm-ext
 
-pretrained_bert_model_name=bert-base-japanese
+
+#pretrained_bert_model_name=bert-base-japanese
 
 
 # parse options
