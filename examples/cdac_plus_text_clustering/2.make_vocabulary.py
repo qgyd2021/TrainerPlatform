@@ -16,13 +16,12 @@ from toolbox.torch.utils.data.vocabulary import Vocabulary
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_dir', default='./file_dir', type=str)
     parser.add_argument(
         '--intent_classification_xlsx',
         default='datasets/basic_intent_classification/intent_classification_cn.xlsx',
         type=str
     )
-    parser.add_argument('--pretrained_model_path', default='chinese-bert-wwm-ext', type=str)
+    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
     parser.add_argument('--train_labeled', default='train_labeled.json', type=str)
     parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
     args = parser.parse_args()
@@ -32,7 +31,7 @@ def get_args():
 def main():
     args = get_args()
 
-    model_name = args.pretrained_model_path
+    model_name = args.pretrained_model_dir
 
     tokenizer = PretrainedBertTokenizer(model_name)
 

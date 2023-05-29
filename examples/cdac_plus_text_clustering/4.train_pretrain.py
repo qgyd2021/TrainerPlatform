@@ -46,7 +46,7 @@ def get_args():
     parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
     parser.add_argument('--train_all', default='train_all.json', type=str)
 
-    parser.add_argument('--pretrained_model_path', default='chinese-bert-wwm-ext', type=str)
+    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
     parser.add_argument('--k_classes', default=14, type=int)
     parser.add_argument('--n_clusters', default=200, type=int)
     parser.add_argument('--upper_threshold', default=0.95, type=float)
@@ -268,7 +268,7 @@ def main():
     args = get_args()
     logger = logging_config(args.serialization_dir)
 
-    model_name = args.pretrained_model_path
+    model_name = args.pretrained_model_dir
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     n_gpu = torch.cuda.device_count()

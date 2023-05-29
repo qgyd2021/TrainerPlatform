@@ -10,8 +10,10 @@ stop_stage=9
 
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
-final_model_name=final_model_name
-intent_classification_xlsx=D:/Users/tianx/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
+basic_intent_classification_datasets_dir=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification
+intent_classification_xlsx=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
+
+pretrained_bert_model_name=bert-base-japanese
 
 
 # parse options
@@ -43,7 +45,10 @@ while true; do
   esac
 done
 
+
 file_dir="${work_dir}/${file_folder_name}"
+
+pretrained_models_dir="${work_dir}/../../pretrained_models";
 
 
 $verbose && echo "system_version: ${system_version}"
@@ -55,11 +60,107 @@ elif [ $system_version == "centos" ] || [ $system_version == "ubuntu" ]; then
   alias python3='/data/local/bin/TrainerPlatform/bin/python3'
 fi
 
+
+declare -A pretrained_bert_model_dict
+pretrained_bert_model_dict=(
+  ["chinese-bert-wwm-ext"]="https://huggingface.co/hfl/chinese-bert-wwm-ext"
+  ["bert-base-uncased"]="https://huggingface.co/bert-base-uncased"
+  ["bert-base-japanese"]="https://huggingface.co/cl-tohoku/bert-base-japanese"
+  ["bert-base-vietnamese-uncased"]="https://huggingface.co/trituenhantaoio/bert-base-vietnamese-uncased"
+
+)
+pretrained_model_dir="${pretrained_models_dir}/${pretrained_bert_model_name}"
+
+
+if [ ${stage} -le -2 ] && [ ${stop_stage} -ge -2 ]; then
+  $verbose && echo "stage -2: download pretrained model"
+
+  if [ ! -d "${pretrained_model_dir}" ]; then
+    mkdir -p "${pretrained_models_dir}"
+    cd "${pretrained_models_dir}" || exit 1;
+
+    repository_url="${pretrained_bert_model_dict[${pretrained_bert_model_name}]}"
+    git clone "${repository_url}"
+
+    cd "${pretrained_model_dir}" || exit 1;
+    rm flax_model.msgpack && rm pytorch_model.bin && rm tf_model.h5
+    wget "${repository_url}/resolve/main/pytorch_model.bin"
+  fi
+fi
+
+
+if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
+  $verbose && echo "stage -1: download datasets"
+  cd "${work_dir}" || exit 1;
+
+  mkdir -p basic_intent_classification_datasets_dir && cd basic_intent_classification_datasets_dir || exit 1;
+
+  dataset_name_array=(
+    intent_classification_cn
+    intent_classification_en
+    intent_classification_jp
+    intent_classification_vi
+  )
+
+  for dataset_name in ${dataset_name_array[*]}
+  do
+    if [ ! -d "${dataset_name}" ]; then
+      wget -c "https://huggingface.co/datasets/qgyd2021/basic_intent_classification/resolve/main/${dataset_name}.xlsx"
+    fi
+  done
+fi
+
+
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
-  --file_dir "${file_dir}" \
   --intent_classification_xlsx "${intent_classification_xlsx}" \
+
+fi
+
+
+if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
+  $verbose && echo "stage 1: make vocabulary"
+  cd "${work_dir}" || exit 1
+  python3 2.make_vocabulary.py \
+  --intent_classification_xlsx "${intent_classification_xlsx}" \
+  --pretrained_model_dir "${pretrained_model_dir}"
+
+fi
+
+
+if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
+  $verbose && echo "stage 2: train classification"
+  cd "${work_dir}" || exit 1
+  python3 3.train_classification.py \
+  --pretrained_model_dir "${pretrained_model_dir}"
+
+fi
+
+
+if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
+  $verbose && echo "stage 3: train pretrain"
+  cd "${work_dir}" || exit 1
+  python3 4.train_pretrain.py \
+  --pretrained_model_dir "${pretrained_model_dir}"
+
+fi
+
+
+if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+  $verbose && echo "stage 4: train finetune"
+  cd "${work_dir}" || exit 1
+  python3 5.train_finetune.py \
+  --pretrained_model_dir "${pretrained_model_dir}"
+
+fi
+
+
+if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+  $verbose && echo "stage 5: gen vector"
+  cd "${work_dir}" || exit 1
+  python3 5.train_fine_tune.py \
+  --pretrained_model_dir "${pretrained_model_dir}"
 
 fi

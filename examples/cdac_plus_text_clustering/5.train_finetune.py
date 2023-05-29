@@ -44,7 +44,7 @@ def get_args():
     parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
     parser.add_argument('--train_all', default='train_all.json', type=str)
 
-    parser.add_argument('--pretrained_model_path', default='chinese-bert-wwm-ext', type=str)
+    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
     parser.add_argument('--k_classes', default=14, type=int)
     parser.add_argument('--n_clusters', default=200, type=int)
     parser.add_argument('--num_epochs', default=100, type=int)
@@ -264,7 +264,7 @@ def main():
     args = get_args()
     logger = logging_config(args.serialization_dir)
 
-    model_name = args.pretrained_model_path
+    model_name = args.pretrained_model_dir
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     n_gpu = torch.cuda.device_count()
@@ -339,7 +339,7 @@ def main():
 
     # Initialize cluster centers
     if args.kmeans_cluster_centers_pkl_filename is None:
-        vector_represents = []
+        vector_represents = list()
         for step, batch in enumerate(tqdm(train_all_data_loader, desc='Extracting representation I')):
             input_ids, _ = batch
             input_ids = input_ids.to(device)
