@@ -115,6 +115,8 @@ class CollateFunction(object):
 
 def main():
     args = get_args()
+    os.makedirs(args.serialization_dir, exist_ok=False)
+
     logger = logging_config(args.serialization_dir)
 
     model_name = args.pretrained_model_dir
@@ -122,7 +124,6 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     n_gpu = torch.cuda.device_count()
 
-    os.makedirs(args.serialization_dir, exist_ok=False)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)

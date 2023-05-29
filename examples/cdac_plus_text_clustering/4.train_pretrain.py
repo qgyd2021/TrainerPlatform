@@ -266,6 +266,8 @@ class CollateFunction(object):
 
 def main():
     args = get_args()
+    os.makedirs(args.serialization_dir, exist_ok=False)
+
     logger = logging_config(args.serialization_dir)
 
     model_name = args.pretrained_model_dir

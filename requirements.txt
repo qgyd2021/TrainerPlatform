@@ -18,3 +18,4 @@ ipadic==1.0.0
 Flask-APScheduler==1.12.4
 cacheout==0.14.0
 pytorch-pretrained-bert==0.6.2
+scikit-learn==0.20.3
