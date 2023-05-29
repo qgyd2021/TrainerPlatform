@@ -30,8 +30,10 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--train_all', default='train_all.json', type=str)
+    parser.add_argument('--n_clusters', default=200, type=int)
 
     parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
+    parser.add_argument('--pretrain_model_filename', default=None, type=str)
 
     args = parser.parse_args()
     return args

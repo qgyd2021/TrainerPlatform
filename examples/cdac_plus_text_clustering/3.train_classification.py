@@ -31,8 +31,6 @@ from toolbox.torch.utils.data.tokenizers.pretrained_bert_tokenizer import Pretra
 from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainClustering, CDACPlus
 from toolbox.torchtext.models.text_clustering.utils import clustering_score
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -168,6 +166,10 @@ def main():
 
     # Freezing all transformer (except the last layer)
     bert_for_constrain_clustering = BertForConstrainClustering.from_pretrained(model_name)
+    for name, param in bert_for_constrain_clustering.bert.named_parameters():
+        param.requires_grad = False
+        if "encoder.layer.11" in name or "pooler" in name:
+            param.requires_grad = True
 
     model = CDACPlus(
         backbone=bert_for_constrain_clustering,

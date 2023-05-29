@@ -36,8 +36,6 @@ from toolbox.torch.utils.data.tokenizers.pretrained_bert_tokenizer import Pretra
 from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainClustering, CDACPlus
 from toolbox.torchtext.models.text_clustering.utils import clustering_score
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -279,7 +277,6 @@ def main():
     lower_threshold = args.lower_threshold
     eta = 1.1 * 0.009
 
-    os.makedirs(args.serialization_dir, exist_ok=False)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)

@@ -34,8 +34,6 @@ from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainC
 from toolbox.torchtext.models.text_clustering.cdac_plus import StudentsTDistribution, AuxiliaryTargetDistribution
 from toolbox.torchtext.models.text_clustering.utils import clustering_score
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -52,7 +50,7 @@ def get_args():
     parser.add_argument('--learning_rate', default=5e-5, type=float)
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
     parser.add_argument('--num_serialized_models_to_keep', default=10, type=int)
-    parser.add_argument('--serialization_dir', default='fine_tuning', type=str)
+    parser.add_argument('--serialization_dir', default='finetuning', type=str)
     parser.add_argument('--pretrain_model_filename', default='pretrain/pretrain_epoch_44.bin', required=True, type=str)
     parser.add_argument('--kmeans_cluster_centers_pkl_filename', default=None, type=str)
 
@@ -271,7 +269,6 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     n_gpu = torch.cuda.device_count()
 
-    os.makedirs(args.serialization_dir, exist_ok=False)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
