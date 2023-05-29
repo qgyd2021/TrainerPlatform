@@ -53,6 +53,10 @@ file_dir="${work_dir}/${file_folder_name}"
 
 pretrained_models_dir="${work_dir}/../../pretrained_models";
 
+classification_serialization_dir="${work_dir}/classification"
+pretrain_serialization_dir="${work_dir}/pretrain"
+finetune_serialization_dir="${work_dir}/finetune"
+
 
 $verbose && echo "system_version: ${system_version}"
 
@@ -137,7 +141,8 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
   $verbose && echo "stage 2: train classification"
   cd "${work_dir}" || exit 1
   python3 3.train_classification.py \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --serialization_dir "${classification_serialization_dir}"
 
 fi
 
@@ -146,7 +151,8 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
   $verbose && echo "stage 3: train pretrain"
   cd "${work_dir}" || exit 1
   python3 4.train_pretrain.py \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --pretrain_model_filename "${classification_serialization_dir}/best.bin"
 
 fi
 
@@ -155,7 +161,8 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
   $verbose && echo "stage 4: train finetune"
   cd "${work_dir}" || exit 1
   python3 5.train_finetune.py \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --pretrain_model_filename "${pretrain_serialization_dir}/best.bin"
 
 fi
 
@@ -164,6 +171,7 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   $verbose && echo "stage 5: gen vector"
   cd "${work_dir}" || exit 1
   python3 6.gen_vector.py \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --pretrain_model_filename "${finetune_serialization_dir}/best.bin"
 
 fi

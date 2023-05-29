@@ -515,8 +515,8 @@ def main():
             break
 
         scores = clustering_score(
-            y_pred.detach().numpy(),
-            y_true.detach().numpy(),
+            y_pred.detach().cpu().numpy(),
+            y_true.detach().cpu().numpy(),
         )
         metrics = {
             'upper_threshold': round(upper_threshold, 4),
