@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -1 --stop_stage 5 --system_version windows
+# sh run.sh --stage -1 --stop_stage 5 --system_version centos
 
 # params
 system_version="windows";
@@ -93,7 +94,7 @@ if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
   $verbose && echo "stage -1: download datasets"
   cd "${work_dir}" || exit 1;
 
-  mkdir -p basic_intent_classification_datasets_dir && cd basic_intent_classification_datasets_dir || exit 1;
+  mkdir -p "${basic_intent_classification_datasets_dir}" && cd "${basic_intent_classification_datasets_dir}" || exit 1;
 
   dataset_name_array=(
     intent_classification_cn
