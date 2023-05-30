@@ -38,8 +38,8 @@ def get_args():
     parser.add_argument('--all_vector', default='all_vector.json', type=str)
     parser.add_argument('--n_clusters', default=200, type=int)
 
-    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
-    parser.add_argument('--pretrain_model_filename', default=None, type=str)
+    parser.add_argument('--pretrained_model_dir', default='../../pretrained_models/chinese-bert-wwm-ext', type=str)
+    parser.add_argument('--pretrain_model_filename', default='./finetune/best/bin', type=str)
 
     args = parser.parse_args()
     return args
@@ -102,7 +102,7 @@ class FaissRetrieval(object):
         self._init_index()
 
     def _init_index(self):
-        logger.info('[init index] ...')
+        logger.info('[init index] start')
 
         vector_list = list()
         text_info_list = list()
@@ -133,6 +133,7 @@ class FaissRetrieval(object):
         self.index.add(vector_list)
         self.vector_list = vector_list
         self.text_info_list = text_info_list
+        logger.info('[init index] finish')
 
     def sim_score(self, vector1, vector2, sim_mode='cosine'):
         if sim_mode == 'cosine':
