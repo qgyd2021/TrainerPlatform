@@ -11,6 +11,13 @@ from typing import List
 pwd = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(pwd, '../../'))
 
+format = '[%(asctime)s] %(levelname)s \t [%(filename)s %(lineno)d] %(message)s'
+logging.basicConfig(format=format,
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
+
 import numpy as np
 import pandas as pd
 import torch

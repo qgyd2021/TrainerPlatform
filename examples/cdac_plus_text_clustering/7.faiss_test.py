@@ -11,6 +11,13 @@ from typing import List
 pwd = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(pwd, '../../'))
 
+format = '[%(asctime)s] %(levelname)s \t [%(filename)s %(lineno)d] %(message)s'
+logging.basicConfig(format=format,
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
+
 import faiss
 import numpy as np
 import pandas as pd
@@ -21,9 +28,6 @@ from project_settings import project_path
 from toolbox.torch.utils.data.vocabulary import Vocabulary
 from toolbox.torch.utils.data.tokenizers.pretrained_bert_tokenizer import PretrainedBertTokenizer
 from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainClustering, CDACPlus
-
-
-logger = logging.getLogger(__name__)
 
 
 def get_args():
@@ -98,7 +102,7 @@ class FaissRetrieval(object):
         self._init_index()
 
     def _init_index(self):
-        logger.info('init index ...')
+        logger.info('[init index] ...')
 
         vector_list = list()
         text_info_list = list()
@@ -120,10 +124,11 @@ class FaissRetrieval(object):
                 })
 
                 if count % 10000 == 0:
-                    logger.info('init index, count: {}'.format(count))
+                    logger.info('[init index] count: {}'.format(count))
 
                 count += 1
 
+        logger.info('[init index] vector_list length: {}'.format(len(vector_list)))
         vector_list = np.array(vector_list, dtype=np.float32)
         self.index.add(vector_list)
         self.vector_list = vector_list

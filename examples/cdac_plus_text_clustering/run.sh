@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -2 --stop_stage 5 --system_version windows
-# sh run.sh --stage 4 --stop_stage 5 --system_version centos
+# sh run.sh --stage 6 --stop_stage 6 --system_version centos
 
 # params
 system_version="windows";
