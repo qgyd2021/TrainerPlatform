@@ -10,7 +10,7 @@ stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
 work_dir="$(pwd)"
-file_folder_name=
+file_folder_name=file_folder_name
 
 basic_intent_classification_datasets_dir=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification
 intent_classification_xlsx=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
