@@ -114,7 +114,7 @@ class FaissRetrieval(object):
 
                 text = row['text']
                 label = row['label']
-                vector = row['vector']
+                vector = row['vector'][0]
 
                 vector_list.append(vector)
 
