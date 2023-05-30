@@ -220,8 +220,8 @@ def main():
             logits = model.forward(input_ids)
 
         logits = logits.detach().cpu().numpy()
-
-        candidates: List[dict] = faiss_index.retrieval(logits)
+        vector = logits[0]
+        candidates: List[dict] = faiss_index.retrieval(vector)
         for candidate in candidates:
             text_ = candidate['text']
             label_ = candidate['label']
