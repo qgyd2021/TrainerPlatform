@@ -137,14 +137,14 @@ class FaissRetrieval(object):
 
     def sim_score(self, vector1, vector2, sim_mode='cosine'):
         if sim_mode == 'cosine':
-            vector1 = np.linalg.norm(vector1, 2)
-            vector2 = np.linalg.norm(vector2, 2)
+            vector1 = vector1 / np.linalg.norm(vector1, 2)
+            vector2 = vector2 / np.linalg.norm(vector2, 2)
             sim = np.sum(vector1 * vector2, axis=-1)
         elif sim_mode == 'probs':
             sim = np.sum(np.sqrt(vector1 + 1e-7) * np.sqrt(vector2 + 1e-7), axis=-1)
         else:
-            vector1 = np.linalg.norm(vector1, 2)
-            vector2 = np.linalg.norm(vector2, 2)
+            vector1 = vector1 / np.linalg.norm(vector1, 2)
+            vector2 = vector2 / np.linalg.norm(vector2, 2)
             sim = np.sum(vector1 * vector2, axis=-1)
         return sim
 
