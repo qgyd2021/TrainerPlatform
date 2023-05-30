@@ -472,12 +472,6 @@ def main():
         delta_labels = np.sum(y_pred.detach().cpu().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
         y_pred_last = np.copy(y_pred.detach().cpu().numpy())
 
-        # early stop
-        if idx_epoch > args.min_epochs and delta_labels < args.min_delta_labels:
-            logger.info('Epoch: {}, delta labels: {} less than {}, exit.'.format(
-                idx_epoch, delta_labels, args.min_delta_labels))
-            break
-
         metrics = {
             'best_nmi': best_nmi,
             'delta_labels': round(delta_labels, 4),
@@ -522,7 +516,18 @@ def main():
             os.remove(model_filename_to_delete)
         torch.save(model.state_dict(), model_filename)
 
-        # early stop
+        # early stop 1
+        if idx_epoch > args.min_epochs and delta_labels < args.min_delta_labels:
+            logger.info('Epoch: {}, delta labels: {} less than {}, exit.'.format(
+                idx_epoch, delta_labels, args.min_delta_labels))
+            break
+
+        # early stop 2
+        if scores['NMI'] > 1:
+            logger.info('Epoch: {}, nmi score should be less than 1.'.format(idx_epoch))
+            break
+
+        # early stop 3
         if best_model is None or best_nmi is None:
             best_model = copy.deepcopy(model)
             best_nmi = scores['NMI']
