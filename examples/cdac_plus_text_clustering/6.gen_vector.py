@@ -32,9 +32,6 @@ from toolbox.torchtext.models.text_clustering.cdac_plus import StudentsTDistribu
 from toolbox.torchtext.models.text_clustering.utils import clustering_score
 
 
-logger = logging.getLogger(__name__)
-
-
 def get_args():
     parser = argparse.ArgumentParser()
 
