@@ -228,7 +228,7 @@ def main():
             label_ = candidate['label']
             score_ = candidate['score']
 
-            logger.info(text_, label_, score_)
+            logger.info('text: {}, label: {}, score: {}'.format(text_, label_, score_))
 
 
 if __name__ == '__main__':
