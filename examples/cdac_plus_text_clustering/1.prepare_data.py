@@ -60,7 +60,7 @@ def make_dataset(args):
 
     dataset = pd.DataFrame(dataset)
     dataset = dataset.sort_values(by='random1', ascending=False)
-    dataset.to_excel('dataset.xlsx', index=False, encoding='utf_8_sig')
+    dataset.to_excel(args.dataset_excel, index=False, encoding='utf_8_sig')
     return
 
 
