@@ -11,18 +11,16 @@ from typing import List
 pwd = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(pwd, '../../'))
 
+import faiss
 import numpy as np
 import pandas as pd
 import torch
 from tqdm import tqdm
 
 from project_settings import project_path
-from toolbox.torch.utils.data.dataset.text_classifier_json_dataset import TextClassifierJsonDataset
 from toolbox.torch.utils.data.vocabulary import Vocabulary
 from toolbox.torch.utils.data.tokenizers.pretrained_bert_tokenizer import PretrainedBertTokenizer
 from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainClustering, CDACPlus
-from toolbox.torchtext.models.text_clustering.cdac_plus import StudentsTDistribution, AuxiliaryTargetDistribution
-from toolbox.torchtext.models.text_clustering.utils import clustering_score
 
 
 logger = logging.getLogger(__name__)
@@ -31,7 +29,6 @@ logger = logging.getLogger(__name__)
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--train_all', default='train_all.json', type=str)
     parser.add_argument('--vocabulary', default='vocabulary', type=str)
 
     parser.add_argument('--all_vector', default='all_vector.json', type=str)
@@ -81,6 +78,89 @@ class CollateFunction(object):
         return batch_tokens, batch_labels
 
 
+class FaissRetrieval(object):
+    def __init__(self,
+                 all_vector_json: str,
+                 embedding_dim: int,
+                 sim_mode: str = 'cosine',
+                 top_k: int = 20
+                 ):
+        self.all_vector_json = all_vector_json
+        self.embedding_dim = embedding_dim
+        self.sim_mode = sim_mode
+        self.top_k = top_k
+
+        self.index = faiss.IndexFlatL2(embedding_dim)
+
+        self.vector_list: np.ndarray = None
+        self.text_info_list: List[dict] = None
+
+        self._init_index()
+
+    def _init_index(self):
+        logger.info('init index ...')
+
+        vector_list = list()
+        text_info_list = list()
+
+        count = 0
+        with open(self.all_vector_json, 'r', encoding='utf-8') as f:
+            for row in f:
+                row = json.loads(row)
+
+                text = row['text']
+                label = row['label']
+                vector = row['vector']
+
+                vector_list.append(vector)
+
+                text_info_list.append({
+                    'text': text,
+                    'label': label,
+                })
+
+                if count % 10000 == 0:
+                    logger.info('init index, count: {}'.format(count))
+
+                count += 1
+
+        vector_list = np.array(vector_list, dtype=np.float32)
+        self.index.add(vector_list)
+        self.vector_list = vector_list
+        self.text_info_list = text_info_list
+
+    def sim_score(self, vector1, vector2, sim_mode='cosine'):
+        if sim_mode == 'cosine':
+            sim = np.sum(vector1 * vector2, axis=-1)
+        elif sim_mode == 'probs':
+            sim = np.sum(np.sqrt(vector1 + 1e-7) * np.sqrt(vector2 + 1e-7), axis=-1)
+        else:
+            sim = np.sum(vector1 * vector2, axis=-1)
+        return sim
+
+    def retrieval(self, vector: np.ndarray):
+        vector = np.array([vector], dtype=np.float32)
+        D, I = self.index.search(vector, self.top_k)
+
+        result = list()
+        for idx in I[0]:
+            text_info = self.text_info_list[idx]
+            idx_vector = self.vector_list[idx]
+
+            sim = self.sim_score(
+                vector1=vector,
+                vector2=np.array([idx_vector], dtype=np.float32),
+                sim_mode=self.sim_mode,
+            )
+
+            result.append({
+                'text': text_info['text'],
+                'label': text_info['label'],
+                'score': round(float(sim), 4),
+            })
+        return result
+
+
 def main():
     args = get_args()
 
@@ -90,11 +170,9 @@ def main():
 
     vocabulary = Vocabulary.from_files(args.vocabulary)
 
+    tokenizer = PretrainedBertTokenizer(model_name)
+
     # dataset
-    train_all_dataset = TextClassifierJsonDataset(
-        json_file=args.train_all,
-        tokenizer=PretrainedBertTokenizer(model_name),
-    )
     collate_fn = CollateFunction(
         vocab=vocabulary,
         token_min_padding_length=5,
@@ -116,31 +194,35 @@ def main():
     model.to(device)
     model.eval()
 
-    count = 0
-    with open(args.all_vector, 'w', encoding='utf-8') as f:
-        for instance in train_all_dataset:
-            input_ids, targets = collate_fn([instance])
-            input_ids = input_ids.to(device)
-            with torch.no_grad():
-                logits = model.forward(input_ids)
+    # faiss
+    faiss_index = FaissRetrieval(
+        all_vector_json=args.all_vector,
+        embedding_dim=args.n_clusters
+    )
 
-            logits = logits.detach().cpu().numpy()
+    while True:
+        text = input('text input: ')
+        text = str(text).strip()
 
-            row = {
-                'text': instance['metadata']['text'],
-                'tokens': instance['tokens'],
-                'label': instance['label'],
-                'vector': logits.tolist()
-            }
-            row = json.dumps(row, ensure_ascii=False)
-            f.write('{}\n'.format(row))
+        sample = {
+            'tokens': tokenizer.tokenize(text),
+            'label': '未知领域'
+        }
 
-            if count % 1000 == 0:
-                logger.info('count: {}'.format(count))
+        input_ids, targets = collate_fn([sample])
+        input_ids = input_ids.to(device)
+        with torch.no_grad():
+            logits = model.forward(input_ids)
 
-            count += 1
+        logits = logits.detach().cpu().numpy()
 
-    return
+        candidates: List[dict] = faiss_index.retrieval(logits)
+        for candidate in candidates:
+            text_ = candidate['text']
+            label_ = candidate['label']
+            score_ = candidate['score']
+
+            logger.info(text_, label_, score_)
 
 
 if __name__ == '__main__':

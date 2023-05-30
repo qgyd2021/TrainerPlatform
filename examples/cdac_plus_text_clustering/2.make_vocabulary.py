@@ -23,6 +23,8 @@ def get_args():
     )
     parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
     parser.add_argument('--train_all', default='train_all.json', type=str)
+    parser.add_argument('--vocabulary', default='vocabulary', type=str)
+
     args = parser.parse_args()
     return args
 
@@ -46,7 +48,7 @@ def main():
         oov_token='[UNK]',
         namespace='tokens',
     )
-    vocabulary.save_to_files('vocabulary')
+    vocabulary.save_to_files(args.vocabulary)
 
     return
 

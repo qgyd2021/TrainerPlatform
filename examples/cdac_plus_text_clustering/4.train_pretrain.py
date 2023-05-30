@@ -40,18 +40,21 @@ from toolbox.torchtext.models.text_clustering.utils import clustering_score
 def get_args():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
+
     parser.add_argument('--train_labeled', default='train_labeled.json', type=str)
     parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
     parser.add_argument('--train_all', default='train_all.json', type=str)
 
-    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
-    parser.add_argument('--k_classes', default=14, type=int)
+    parser.add_argument('--vocabulary', default='vocabulary', type=str)
+
     parser.add_argument('--n_clusters', default=200, type=int)
+    parser.add_argument('--k_classes', default=14, type=int)
     parser.add_argument('--upper_threshold', default=0.95, type=float)
     parser.add_argument('--lower_threshold', default=0.455, type=float)
     parser.add_argument('--num_epochs', default=46, type=int)
     parser.add_argument('--batch_size', default=128, type=int)
-    parser.add_argument('--learning_rate', default=2e-5, type=float)
+    parser.add_argument('--learning_rate', default=5e-4, type=float)
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
     parser.add_argument('--num_serialized_models_to_keep', default=10, type=int)
     parser.add_argument('--serialization_dir', default='pretrain', type=str)
@@ -281,7 +284,7 @@ def main():
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    vocabulary = Vocabulary.from_files('vocabulary')
+    vocabulary = Vocabulary.from_files(args.vocabulary)
     num_labels = vocabulary.get_vocab_size(namespace='labels')
 
     collate_fn = CollateFunction(

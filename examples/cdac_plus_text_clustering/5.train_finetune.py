@@ -38,13 +38,16 @@ from toolbox.torchtext.models.text_clustering.utils import clustering_score
 def get_args():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
+
     parser.add_argument('--train_labeled', default='train_labeled.json', type=str)
     parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
     parser.add_argument('--train_all', default='train_all.json', type=str)
 
-    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
-    parser.add_argument('--k_classes', default=14, type=int)
+    parser.add_argument('--vocabulary', default='vocabulary', type=str)
+
     parser.add_argument('--n_clusters', default=200, type=int)
+    parser.add_argument('--k_classes', default=14, type=int)
     parser.add_argument('--max_epochs', default=100, type=int)
     parser.add_argument('--min_epochs', default=1, type=int)
     parser.add_argument('--batch_size', default=64, type=int)
@@ -277,7 +280,7 @@ def main():
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    vocabulary = Vocabulary.from_files('vocabulary')
+    vocabulary = Vocabulary.from_files(args.vocabulary)
     num_labels = vocabulary.get_vocab_size(namespace='labels')
 
     collate_fn = CollateFunction(
@@ -286,7 +289,7 @@ def main():
     )
 
     train_all_dataset = TextClassifierJsonDataset(
-        json_file='train_all.json',
+        json_file=args.train_all,
         tokenizer=PretrainedBertTokenizer(model_name),
     )
     train_all_data_loader = ClassDependentDataLoader(
@@ -298,7 +301,7 @@ def main():
     )
 
     train_labeled_dataset = TextClassifierJsonDataset(
-        json_file='train_labeled.json',
+        json_file=args.train_labeled,
         tokenizer=PretrainedBertTokenizer(model_name),
     )
     train_labeled_data_loader = ClassDependentDataLoader(
@@ -310,7 +313,7 @@ def main():
     )
 
     valid_labeled_dataset = TextClassifierJsonDataset(
-        json_file='valid_labeled.json',
+        json_file=args.valid_labeled,
         tokenizer=PretrainedBertTokenizer(model_name),
     )
     valid_labeled_data_loader = ClassDependentDataLoader(

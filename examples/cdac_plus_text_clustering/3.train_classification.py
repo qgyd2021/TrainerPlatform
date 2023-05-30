@@ -35,11 +35,14 @@ from toolbox.torchtext.models.text_clustering.utils import clustering_score
 def get_args():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
+
     parser.add_argument('--train_labeled', default='train_labeled.json', type=str)
     parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
     parser.add_argument('--train_all', default='train_all.json', type=str)
 
-    parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
+    parser.add_argument('--vocabulary', default='vocabulary', type=str)
+
     parser.add_argument('--n_clusters', default=200, type=int)
     parser.add_argument('--num_epochs', default=100, type=int)
     parser.add_argument('--batch_size', default=64, type=int)
@@ -126,7 +129,7 @@ def main():
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    vocabulary = Vocabulary.from_files('vocabulary')
+    vocabulary = Vocabulary.from_files(args.vocabulary)
     num_labels = vocabulary.get_vocab_size(namespace='labels')
 
     collate_fn = CollateFunction(

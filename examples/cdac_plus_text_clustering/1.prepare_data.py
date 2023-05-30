@@ -24,6 +24,8 @@ def get_args():
     parser.add_argument('--valid_labeled', default='valid_labeled.json', type=str)
     parser.add_argument('--train_all', default='train_all.json', type=str)
 
+    parser.add_argument('--dataset_excel', default='dataset.xlsx', type=str)
+
     args = parser.parse_args()
     return args
 
@@ -66,7 +68,7 @@ def main():
     args = get_args()
 
     make_dataset(args)
-    df = pd.read_excel('dataset.xlsx')
+    df = pd.read_excel(args.dataset_excel)
 
     train_labeled_f = open(args.train_labeled, 'w', encoding='utf-8')
     valid_labeled_f = open(args.valid_labeled, 'w', encoding='utf-8')

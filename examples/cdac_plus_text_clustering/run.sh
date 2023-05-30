@@ -10,12 +10,22 @@ stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
 work_dir="$(pwd)"
+file_folder_name=
+
 basic_intent_classification_datasets_dir=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification
 intent_classification_xlsx=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
+
+train_labeled_subset=train_labeled.json
+valid_labeled_subset=valid_labeled.json
+train_all_subset=train_all.json
+dataset_excel=dataset.xlsx
+vocabulary=vocabulary
+all_vector=all_vector.json
+
 pretrained_bert_model_name=chinese-bert-wwm-ext
 
-
-#pretrained_bert_model_name=bert-base-japanese
+n_clusters=200
+k_classes=14
 
 
 # parse options
@@ -122,6 +132,10 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
   --intent_classification_xlsx "${intent_classification_xlsx}" \
+  --train_labeled "${file_dir}/${train_labeled_subset}" \
+  --valid_labeled "${file_dir}/${valid_labeled_subset}" \
+  --train_all "${file_dir}/${train_all_subset}" \
+  --dataset_excel "${file_dir}/${dataset_excel}" \
 
 fi
 
@@ -131,7 +145,9 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
   cd "${work_dir}" || exit 1
   python3 2.make_vocabulary.py \
   --intent_classification_xlsx "${intent_classification_xlsx}" \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --train_all "${file_dir}/${train_all_subset}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
 
 fi
 
@@ -141,7 +157,12 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
   cd "${work_dir}" || exit 1
   python3 3.train_classification.py \
   --pretrained_model_dir "${pretrained_model_dir}" \
-  --serialization_dir "${classification_serialization_dir}"
+  --train_labeled "${file_dir}/${train_labeled_subset}" \
+  --valid_labeled "${file_dir}/${valid_labeled_subset}" \
+  --train_all "${file_dir}/${train_all_subset}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --n_clusters ${n_clusters} \
+  --serialization_dir "${classification_serialization_dir}" \
 
 fi
 
@@ -151,7 +172,14 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
   cd "${work_dir}" || exit 1
   python3 4.train_pretrain.py \
   --pretrained_model_dir "${pretrained_model_dir}" \
-  --pretrain_model_filename "${classification_serialization_dir}/best.bin"
+  --train_labeled "${file_dir}/${train_labeled_subset}" \
+  --valid_labeled "${file_dir}/${valid_labeled_subset}" \
+  --train_all "${file_dir}/${train_all_subset}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --n_clusters ${n_clusters} \
+  --k_classes ${k_classes} \
+  --serialization_dir "${pretrain_serialization_dir}" \
+  --pretrain_model_filename "${classification_serialization_dir}/best.bin" \
 
 fi
 
@@ -161,7 +189,14 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
   cd "${work_dir}" || exit 1
   python3 5.train_finetune.py \
   --pretrained_model_dir "${pretrained_model_dir}" \
-  --pretrain_model_filename "${pretrain_serialization_dir}/best.bin"
+  --train_labeled "${file_dir}/${train_labeled_subset}" \
+  --valid_labeled "${file_dir}/${valid_labeled_subset}" \
+  --train_all "${file_dir}/${train_all_subset}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --n_clusters ${n_clusters} \
+  --k_classes ${k_classes} \
+  --serialization_dir "${finetune_serialization_dir}" \
+  --pretrain_model_filename "${pretrain_serialization_dir}/best.bin" \
 
 fi
 
@@ -170,7 +205,24 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   $verbose && echo "stage 5: gen vector"
   cd "${work_dir}" || exit 1
   python3 6.gen_vector.py \
+  --train_all "${file_dir}/${train_all_subset}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --all_vector "${file_dir}/${all_vector}" \
+  --n_clusters ${n_clusters} \
   --pretrained_model_dir "${pretrained_model_dir}" \
-  --pretrain_model_filename "${finetune_serialization_dir}/best.bin"
+  --pretrain_model_filename "${finetune_serialization_dir}/best.bin" \
+
+fi
+
+
+if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
+  $verbose && echo "stage 6: faiss test"
+  cd "${work_dir}" || exit 1
+  python3 7.faiss_test.py \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --all_vector "${file_dir}/${all_vector}" \
+  --n_clusters ${n_clusters} \
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --pretrain_model_filename "${finetune_serialization_dir}/best.bin" \
 
 fi
