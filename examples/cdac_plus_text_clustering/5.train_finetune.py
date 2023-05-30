@@ -351,6 +351,7 @@ def main():
 
         vector_represents = np.vstack(vector_represents)
 
+        logger.info('kmeans ...')
         kmeans = KMeans(n_clusters=args.n_clusters, n_jobs=-1, random_state=0)
         kmeans.fit(vector_represents)
 
@@ -466,7 +467,7 @@ def main():
         )
 
         delta_label = np.sum(y_pred.detach().cpu().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
-        y_pred_last = np.copy(y_pred)
+        y_pred_last = np.copy(y_pred.detach().cpu().numpy())
         if idx_epoch > 0 and delta_label < 0.001:
             print(idx_epoch, delta_label, 'break')
             break
