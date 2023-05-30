@@ -115,6 +115,7 @@ class FaissRetrieval(object):
                 text = row['text']
                 label = row['label']
                 vector = row['vector'][0]
+                vector = vector / np.linalg.norm(vector, 2)
 
                 vector_list.append(vector)
 
