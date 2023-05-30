@@ -45,15 +45,18 @@ def get_args():
     parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
     parser.add_argument('--k_classes', default=14, type=int)
     parser.add_argument('--n_clusters', default=200, type=int)
-    parser.add_argument('--num_epochs', default=100, type=int)
+    parser.add_argument('--max_epochs', default=100, type=int)
+    parser.add_argument('--min_epochs', default=10, type=int)
     parser.add_argument('--batch_size', default=64, type=int)
-    parser.add_argument('--learning_rate', default=5e-5, type=float)
+    parser.add_argument('--learning_rate', default=5e-4, type=float)
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
     parser.add_argument('--num_serialized_models_to_keep', default=10, type=int)
     parser.add_argument('--patience', default=5, type=int)
     parser.add_argument('--serialization_dir', default='finetune', type=str)
     parser.add_argument('--pretrain_model_filename', default='pretrain/pretrain_epoch_44.bin', required=True, type=str)
     parser.add_argument('--kmeans_cluster_centers_pkl_filename', default=None, type=str)
+
+    parser.add_argument('--min_delta_labels', default=1e-4, type=float)
 
     parser.add_argument('--seed', default=0, type=int)
 
@@ -409,7 +412,7 @@ def main():
             'weight_decay': 0.0
         },
     ]
-    t_total = int(len(train_all_dataset) / args.batch_size) * args.num_epochs
+    t_total = int(len(train_all_dataset) / args.batch_size) * args.max_epochs
     optimizer = BertAdam(
         optimizer_grouped_parameters,
         lr=args.learning_rate,
@@ -428,7 +431,7 @@ def main():
     )
 
     temp_training_dataset = list()
-    for idx_epoch in range(args.num_epochs):
+    for idx_epoch in range(args.max_epochs):
         # Calculate probabilities P (as target)
         model.eval()
 
@@ -466,15 +469,16 @@ def main():
             y_pred_.detach().cpu().numpy(),
         )
 
-        delta_label = np.sum(y_pred.detach().cpu().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
+        delta_labels = np.sum(y_pred.detach().cpu().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
         y_pred_last = np.copy(y_pred.detach().cpu().numpy())
-        if idx_epoch > 0 and delta_label < 0.001:
-            print(idx_epoch, delta_label, 'break')
+        if idx_epoch > args.min_epochs and delta_labels < args.min_delta_labels:
+            logger.info('Epoch: {}, delta labels: {} less than {}, exit.'.format(
+                idx_epoch, delta_labels, args.min_delta_labels))
             break
 
         metrics = {
             'best_nmi': best_nmi,
-            'delta_label': round(delta_label, 4),
+            'delta_labels': round(delta_labels, 4),
             **scores,
         }
         with open(os.path.join(args.serialization_dir, 'metrics_epoch_{}.json'.format(idx_epoch)), 'w', encoding='utf-8') as f:

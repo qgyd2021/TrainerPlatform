@@ -109,6 +109,7 @@ def main():
     model.to(device)
     model.eval()
 
+    count = 0
     with open('all_vector.json', 'w', encoding='utf-8') as f:
         for instance in train_all_dataset:
             input_ids, targets = collate_fn([instance])
@@ -126,6 +127,11 @@ def main():
             }
             row = json.dumps(row, ensure_ascii=False)
             f.write('{}\n'.format(row))
+
+            if count % 1000 == 0:
+                print('count: {}'.format(count))
+
+            count += 1
 
     return
 
