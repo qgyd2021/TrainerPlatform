@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -2 --stop_stage 5 --system_version windows
-# sh run.sh --stage 6 --stop_stage 6 --system_version centos
+# sh run.sh --stage 0 --stop_stage 6 --system_version centos
 
 # params
 system_version="windows";
@@ -61,6 +61,7 @@ done
 
 
 file_dir="${work_dir}/${file_folder_name}"
+mkdir -p "${file_dir}"
 
 pretrained_models_dir="${work_dir}/../../pretrained_models";
 
