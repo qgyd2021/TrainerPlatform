@@ -45,7 +45,7 @@ def get_args():
     parser.add_argument('--n_clusters', default=200, type=int)
 
     parser.add_argument('--pretrained_model_dir', default='chinese-bert-wwm-ext', type=str)
-    parser.add_argument('--pretrain_model_filename', default=None, type=str)
+    parser.add_argument('--pretrain_model_filename', default='./finetune/best.bin', type=str)
 
     args = parser.parse_args()
     return args
