@@ -119,7 +119,7 @@ def main():
             with torch.no_grad():
                 logits = model.forward(input_ids)
 
-            logits = logits.detach().numpy()
+            logits = logits.detach().cpu().numpy()
 
             row = {
                 'text': instance['metadata']['text'],

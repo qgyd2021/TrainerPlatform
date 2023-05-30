@@ -346,7 +346,7 @@ def main():
             with torch.no_grad():
                 logits = model.forward(input_ids)
 
-            logits = logits.detach().numpy()
+            logits = logits.detach().cpu().numpy()
             vector_represents.append(logits)
 
         vector_represents = np.vstack(vector_represents)
@@ -386,8 +386,8 @@ def main():
     y_pred = torch.argmax(q_all, dim=1)
 
     scores = clustering_score(
-        y_true.detach().numpy(),
-        y_pred.detach().numpy(),
+        y_true.detach().cpu().numpy(),
+        y_pred.detach().cpu().numpy(),
     )
     metrics = {
         **scores,
@@ -461,11 +461,11 @@ def main():
         y_pred_ = torch.masked_select(y_pred, mask)
 
         scores = clustering_score(
-            y_true_.detach().numpy(),
-            y_pred_.detach().numpy(),
+            y_true_.detach().cpu().numpy(),
+            y_pred_.detach().cpu().numpy(),
         )
 
-        delta_label = np.sum(y_pred.detach().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
+        delta_label = np.sum(y_pred.detach().cpu().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
         y_pred_last = np.copy(y_pred)
         if idx_epoch > 0 and delta_label < 0.001:
             print(idx_epoch, delta_label, 'break')
