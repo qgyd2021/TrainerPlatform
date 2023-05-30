@@ -46,7 +46,7 @@ def get_args():
     parser.add_argument('--k_classes', default=14, type=int)
     parser.add_argument('--n_clusters', default=200, type=int)
     parser.add_argument('--max_epochs', default=100, type=int)
-    parser.add_argument('--min_epochs', default=10, type=int)
+    parser.add_argument('--min_epochs', default=1, type=int)
     parser.add_argument('--batch_size', default=64, type=int)
     parser.add_argument('--learning_rate', default=5e-4, type=float)
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
@@ -56,7 +56,7 @@ def get_args():
     parser.add_argument('--pretrain_model_filename', default='pretrain/pretrain_epoch_44.bin', required=True, type=str)
     parser.add_argument('--kmeans_cluster_centers_pkl_filename', default=None, type=str)
 
-    parser.add_argument('--min_delta_labels', default=1e-4, type=float)
+    parser.add_argument('--min_delta_labels', default=1e-3, type=float)
 
     parser.add_argument('--seed', default=0, type=int)
 
@@ -471,6 +471,8 @@ def main():
 
         delta_labels = np.sum(y_pred.detach().cpu().numpy() != y_pred_last).astype(np.float32) / y_pred.shape[0]
         y_pred_last = np.copy(y_pred.detach().cpu().numpy())
+
+        # early stop
         if idx_epoch > args.min_epochs and delta_labels < args.min_delta_labels:
             logger.info('Epoch: {}, delta labels: {} less than {}, exit.'.format(
                 idx_epoch, delta_labels, args.min_delta_labels))
