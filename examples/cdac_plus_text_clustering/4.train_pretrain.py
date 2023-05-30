@@ -61,7 +61,7 @@ def get_args():
     parser.add_argument('--pretrain_model_filename', default='./classification/best.bin', type=str)
     parser.add_argument('--seed', default=0, type=int)
 
-    parser.add_argument('--with_classification_training', default=False, type=bool)
+    parser.add_argument('--with_classification_cross_training', default=False, type=bool)
 
     args = parser.parse_args()
     return args
@@ -381,7 +381,7 @@ def main():
         # classification training
         classification_loss = 0.0
         classification_accuracy = 0.0
-        if args.with_classification_training:
+        if args.with_classification_cross_training:
             total_loss = 0
             total_examples, total_steps = 0, 0
             for step, batch in enumerate(tqdm(train_labeled_classification_data_loader, desc='Epoch={} (classification)'.format(idx_epoch))):

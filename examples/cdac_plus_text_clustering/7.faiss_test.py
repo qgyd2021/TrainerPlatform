@@ -87,7 +87,7 @@ class FaissRetrieval(object):
                  all_vector_json: str,
                  embedding_dim: int,
                  sim_mode: str = 'cosine',
-                 top_k: int = 20
+                 top_k: int = 40
                  ):
         self.all_vector_json = all_vector_json
         self.embedding_dim = embedding_dim

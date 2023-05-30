@@ -27,6 +27,8 @@ pretrained_bert_model_name=chinese-bert-wwm-ext
 n_clusters=200
 k_classes=14
 
+with_classification_cross_training=true
+
 
 # parse options
 while true; do
@@ -155,14 +157,18 @@ fi
 if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
   $verbose && echo "stage 2: train classification"
   cd "${work_dir}" || exit 1
-  python3 3.train_classification.py \
-  --pretrained_model_dir "${pretrained_model_dir}" \
-  --train_labeled "${file_dir}/${train_labeled_subset}" \
-  --valid_labeled "${file_dir}/${valid_labeled_subset}" \
-  --train_all "${file_dir}/${train_all_subset}" \
-  --vocabulary "${file_dir}/${vocabulary}" \
-  --n_clusters ${n_clusters} \
-  --serialization_dir "${classification_serialization_dir}" \
+
+  if [ ${with_classification_cross_training} != true ]; then
+    python3 3.train_classification.py \
+    --pretrained_model_dir "${pretrained_model_dir}" \
+    --train_labeled "${file_dir}/${train_labeled_subset}" \
+    --valid_labeled "${file_dir}/${valid_labeled_subset}" \
+    --train_all "${file_dir}/${train_all_subset}" \
+    --vocabulary "${file_dir}/${vocabulary}" \
+    --n_clusters ${n_clusters} \
+    --serialization_dir "${classification_serialization_dir}" \.
+
+  fi
 
 fi
 
@@ -170,16 +176,36 @@ fi
 if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
   $verbose && echo "stage 3: train pretrain"
   cd "${work_dir}" || exit 1
-  python3 4.train_pretrain.py \
-  --pretrained_model_dir "${pretrained_model_dir}" \
-  --train_labeled "${file_dir}/${train_labeled_subset}" \
-  --valid_labeled "${file_dir}/${valid_labeled_subset}" \
-  --train_all "${file_dir}/${train_all_subset}" \
-  --vocabulary "${file_dir}/${vocabulary}" \
-  --n_clusters ${n_clusters} \
-  --k_classes ${k_classes} \
-  --serialization_dir "${pretrain_serialization_dir}" \
-  --pretrain_model_filename "${classification_serialization_dir}/best.bin" \
+
+  if [ ${with_classification_cross_training} != true ]; then
+
+    python3 4.train_pretrain.py \
+    --pretrained_model_dir "${pretrained_model_dir}" \
+    --train_labeled "${file_dir}/${train_labeled_subset}" \
+    --valid_labeled "${file_dir}/${valid_labeled_subset}" \
+    --train_all "${file_dir}/${train_all_subset}" \
+    --vocabulary "${file_dir}/${vocabulary}" \
+    --n_clusters ${n_clusters} \
+    --k_classes ${k_classes} \
+    --serialization_dir "${pretrain_serialization_dir}" \
+    --pretrain_model_filename "${classification_serialization_dir}/best.bin" \
+
+  else
+
+    python3 4.train_pretrain.py \
+    --pretrained_model_dir "${pretrained_model_dir}" \
+    --train_labeled "${file_dir}/${train_labeled_subset}" \
+    --valid_labeled "${file_dir}/${valid_labeled_subset}" \
+    --train_all "${file_dir}/${train_all_subset}" \
+    --vocabulary "${file_dir}/${vocabulary}" \
+    --n_clusters ${n_clusters} \
+    --k_classes ${k_classes} \
+    --serialization_dir "${pretrain_serialization_dir}" \
+    --pretrain_model_filename "${classification_serialization_dir}/best.bin" \
+    --with_classification_cross_training ${with_classification_cross_training} \
+
+
+  fi
 
 fi
 
