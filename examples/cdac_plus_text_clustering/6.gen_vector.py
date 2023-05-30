@@ -111,7 +111,6 @@ def main():
 
     with open('all_vector.json', 'w', encoding='utf-8') as f:
         for instance in train_all_dataset:
-            print(instance)
             input_ids, targets = collate_fn([instance])
             input_ids = input_ids.to(device)
             with torch.no_grad():
