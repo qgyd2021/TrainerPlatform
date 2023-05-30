@@ -51,7 +51,7 @@ def get_args():
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
     parser.add_argument('--num_serialized_models_to_keep', default=10, type=int)
     parser.add_argument('--patience', default=5, type=int)
-    parser.add_argument('--serialization_dir', default='finetuning', type=str)
+    parser.add_argument('--serialization_dir', default='finetune', type=str)
     parser.add_argument('--pretrain_model_filename', default='pretrain/pretrain_epoch_44.bin', required=True, type=str)
     parser.add_argument('--kmeans_cluster_centers_pkl_filename', default=None, type=str)
 
