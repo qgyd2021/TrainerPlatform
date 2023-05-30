@@ -212,7 +212,7 @@ def main():
 
         sample = {
             'tokens': tokenizer.tokenize(text),
-            'label': '未知领域'
+            'label': '无关领域'
         }
 
         input_ids, targets = collate_fn([sample])
