@@ -436,7 +436,7 @@ def main():
 
     temp_training_dataset = list()
     for idx_epoch in range(args.max_epochs):
-        # Calculate probabilities P (as target)
+        # calculate probabilities p (as target)
         model.eval()
 
         temp_training_dataset = list()
@@ -484,7 +484,12 @@ def main():
         with open(os.path.join(args.serialization_dir, 'metrics_epoch_{}.json'.format(idx_epoch)), 'w', encoding='utf-8') as f:
             json.dump(metrics, f, indent=4, ensure_ascii=False)
 
-        # Fine-tuning with auxiliary distribution
+        log_str = 'Epoch: {}; calculate probabilities p;'.format(idx_epoch)
+        for k, v in scores.items():
+            log_str += ' {}: {}'.format(k, v)
+        logger.info(log_str)
+
+        # fine-tuning with auxiliary distribution
         model.train()
         total_loss = 0
         total_examples, total_steps = 0, 0
@@ -501,17 +506,17 @@ def main():
                 input=torch.log(q),
                 target=target.to(device),
             )
-            kl_loss.backward()
 
             total_loss += kl_loss.item()
             total_examples += input_ids.size(0)
             total_steps += 1
 
+            kl_loss.backward()
             optimizer.step()
             optimizer.zero_grad()
         fine_tuning_loss = total_loss / total_steps
         fine_tuning_loss = round(fine_tuning_loss, 4)
-        logger.info('Epoch: {}; fine_tuning_loss: {}'.format(idx_epoch, fine_tuning_loss))
+        logger.info('Epoch: {}; fine-tuning with auxiliary distribution; fine_tuning_loss: {}'.format(idx_epoch, fine_tuning_loss))
 
         model_filename = os.path.join(args.serialization_dir, 'fine_tuning_epoch_{}.bin'.format(idx_epoch))
         model_filename_list.append(model_filename)
@@ -544,6 +549,7 @@ def main():
             torch.save(model.state_dict(), model_filename)
             patience_count = 0
         elif patience_count >= args.patience:
+            logger.info('Epoch: {}, nmi score did no improve with patience {}. early stop.'.format(idx_epoch, args.patience))
             break
         else:
             patience_count += 1

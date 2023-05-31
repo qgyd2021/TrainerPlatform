@@ -414,6 +414,8 @@ def main():
         # supervised training
         total_loss = 0
         total_examples, total_steps = 0, 0
+        y_pred = list()
+        y_true = list()
         for step, batch in enumerate(tqdm(train_labeled_data_loader, desc='Epoch={} (supervised)'.format(idx_epoch))):
             input_ids, label_ids = batch
             input_ids = input_ids.to(device)
@@ -425,18 +427,40 @@ def main():
                 lower_threshold,
             )
             loss = outputs['loss']
-            loss.backward()
+
+            # shape=[batch_size, num_labels]
+            logits = model.forward(input_ids)
+
+            # shape=[batch_size]
+            pred = torch.argmax(logits, dim=1)
+
+            y_pred.append(pred)
+            y_true.append(label_ids)
 
             total_loss += loss.item()
             total_examples += input_ids.size(0)
             total_steps += 1
 
+            loss.backward()
             optimizer.step()
             optimizer.zero_grad()
             global_step += 1
+
+        y_pred = torch.hstack(y_pred)
+        y_true = torch.hstack(y_true)
+
+        scores = clustering_score(
+            y_pred.detach().cpu().numpy(),
+            y_true.detach().cpu().numpy(),
+        )
+
         supervised_training_loss = total_loss / total_steps
         supervised_training_loss = round(supervised_training_loss, 4)
-        logger.info('Epoch: {}; supervised_training_loss: {}'.format(idx_epoch, supervised_training_loss))
+
+        log_str = 'Epoch: {}; supervised_training_loss: {}'.format(idx_epoch, supervised_training_loss)
+        for k, v in scores.items():
+            log_str += ', {}: {}'.format(k, v)
+        logger.info(log_str)
 
         # semi-supervised training
         total_loss = 0
@@ -456,12 +480,12 @@ def main():
                 )
             )
             loss = outputs['loss']
-            loss.backward()
 
             total_loss += loss.item()
             total_examples += input_ids.size(0)
             total_steps += 1
 
+            loss.backward()
             optimizer.step()
             optimizer.zero_grad()
             global_step += 1
@@ -505,12 +529,21 @@ def main():
             optimizer.zero_grad()
             global_step += 1
 
-        evaluation_loss = total_loss / total_steps
-        evaluation_loss = round(evaluation_loss, 4)
-        logger.info('Epoch: {}; evaluation_loss: {}'.format(idx_epoch, evaluation_loss))
-
         y_pred = torch.hstack(y_pred)
         y_true = torch.hstack(y_true)
+
+        scores = clustering_score(
+            y_pred.detach().cpu().numpy(),
+            y_true.detach().cpu().numpy(),
+        )
+
+        evaluation_loss = total_loss / total_steps
+        evaluation_loss = round(evaluation_loss, 4)
+
+        log_str = 'Epoch: {}; evaluation_loss: {}'.format(idx_epoch, evaluation_loss)
+        for k, v in scores.items():
+            log_str += ', {}: {}'.format(k, v)
+        logger.info(log_str)
 
         upper_threshold -= eta
         lower_threshold += eta * 0.1
@@ -518,10 +551,6 @@ def main():
             logger.info('upper threshold less than lower threshold; break.')
             break
 
-        scores = clustering_score(
-            y_pred.detach().cpu().numpy(),
-            y_true.detach().cpu().numpy(),
-        )
         metrics = {
             'upper_threshold': round(upper_threshold, 4),
             'lower_threshold': round(lower_threshold, 4),
