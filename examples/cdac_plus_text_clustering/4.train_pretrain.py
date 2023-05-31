@@ -293,7 +293,7 @@ def main():
     )
 
     train_all_dataset = TextClassifierJsonDataset(
-        json_file='train_all.json',
+        json_file=args.train_all,
         tokenizer=PretrainedBertTokenizer(model_name),
     )
     train_all_data_loader = ClassDependentDataLoader(
