@@ -58,7 +58,8 @@ def get_args():
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
     parser.add_argument('--num_serialized_models_to_keep', default=10, type=int)
     parser.add_argument('--serialization_dir', default='pretrain', type=str)
-    parser.add_argument('--pretrain_model_filename', default='./classification/best.bin', type=str)
+    # ./classification/best.bin
+    parser.add_argument('--pretrain_model_filename', default=None, type=str)
     parser.add_argument('--seed', default=0, type=int)
 
     parser.add_argument('--with_classification_cross_training', default=False, type=bool)

@@ -202,9 +202,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     --n_clusters ${n_clusters} \
     --k_classes ${k_classes} \
     --serialization_dir "${pretrain_serialization_dir}" \
-    --pretrain_model_filename null \
     --with_classification_cross_training ${with_classification_cross_training} \
-
 
   fi
 
