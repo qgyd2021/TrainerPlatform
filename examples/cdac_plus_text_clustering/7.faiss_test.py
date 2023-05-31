@@ -31,6 +31,12 @@ from toolbox.torchtext.models.text_clustering.cdac_plus import BertForConstrainC
 
 
 def get_args():
+    """
+    python 7.faiss_test.py \
+    --vocabulary ./file_folder_name/vocabulary \
+    --all_vector ./file_folder_name/all_vector.json \
+    --pretrain_model_filename ./finetune/best.bin
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--vocabulary', default='vocabulary', type=str)

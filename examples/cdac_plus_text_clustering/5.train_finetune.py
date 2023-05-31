@@ -49,7 +49,7 @@ def get_args():
     parser.add_argument('--n_clusters', default=200, type=int)
     parser.add_argument('--k_classes', default=14, type=int)
     parser.add_argument('--max_epochs', default=100, type=int)
-    parser.add_argument('--min_epochs', default=1, type=int)
+    parser.add_argument('--min_epochs', default=0, type=int)
     parser.add_argument('--batch_size', default=64, type=int)
     parser.add_argument('--learning_rate', default=5e-4, type=float)
     parser.add_argument('--warmup_proportion', default=0.1, type=float)
@@ -434,7 +434,6 @@ def main():
         namespace='labels',
     )
 
-    temp_training_dataset = list()
     for idx_epoch in range(args.max_epochs):
         # calculate probabilities p (as target)
         model.eval()
@@ -478,7 +477,7 @@ def main():
 
         metrics = {
             'best_nmi': best_nmi,
-            'delta_labels': round(delta_labels, 4),
+            'delta_labels': round(delta_labels, 8),
             **scores,
         }
         with open(os.path.join(args.serialization_dir, 'metrics_epoch_{}.json'.format(idx_epoch)), 'w', encoding='utf-8') as f:
@@ -526,7 +525,7 @@ def main():
         torch.save(model.state_dict(), model_filename)
 
         # early stop 1
-        if idx_epoch > args.min_epochs and delta_labels < args.min_delta_labels:
+        if idx_epoch >= args.min_epochs and delta_labels < args.min_delta_labels:
             logger.info('Epoch: {}, delta labels: {} less than {}, exit.'.format(
                 idx_epoch, delta_labels, args.min_delta_labels))
             break

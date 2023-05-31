@@ -65,9 +65,9 @@ mkdir -p "${file_dir}"
 
 pretrained_models_dir="${work_dir}/../../pretrained_models";
 
-classification_serialization_dir="${work_dir}/classification"
-pretrain_serialization_dir="${work_dir}/pretrain"
-finetune_serialization_dir="${work_dir}/finetune"
+classification_serialization_dir="${file_dir}/classification"
+pretrain_serialization_dir="${file_dir}/pretrain"
+finetune_serialization_dir="${file_dir}/finetune"
 
 
 $verbose && echo "system_version: ${system_version}"

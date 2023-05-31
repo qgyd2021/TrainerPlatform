@@ -545,12 +545,6 @@ def main():
             log_str += ', {}: {}'.format(k, v)
         logger.info(log_str)
 
-        upper_threshold -= eta
-        lower_threshold += eta * 0.1
-        if upper_threshold < lower_threshold:
-            logger.info('upper threshold less than lower threshold; break.')
-            break
-
         metrics = {
             'upper_threshold': round(upper_threshold, 4),
             'lower_threshold': round(lower_threshold, 4),
@@ -575,6 +569,14 @@ def main():
 
         model_filename = os.path.join(args.serialization_dir, 'best.bin')
         torch.save(model.state_dict(), model_filename)
+
+        # update threshold
+        upper_threshold -= eta
+        lower_threshold += eta * 0.1
+        if upper_threshold < lower_threshold:
+            logger.info('upper threshold less than lower threshold; break.')
+            break
+
     return
 
 
