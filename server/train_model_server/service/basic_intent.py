@@ -32,7 +32,14 @@ class BasicIntentByLanguageService(object):
     @staticmethod
     def get_final_model_name(language: str):
         """basic_intent_en"""
-        language = language.split('-')[0].lower()
+        language_map = {
+            'chinese': 'cn',
+            'english': 'en',
+            'japanese': 'jp',
+            'vietnamese': 'vi'
+        }
+        # language = language.split('-')[0].lower()
+        language = language_map[language]
         result = 'basic_intent_{}'.format(language)
         return result
 
