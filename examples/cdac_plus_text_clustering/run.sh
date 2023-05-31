@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # sh run.sh --stage -2 --stop_stage 5 --system_version windows
-# sh run.sh --stage 0 --stop_stage 6 --system_version centos
+# sh run.sh --stage 3 --stop_stage 5 --system_version centos
 
 # params
 system_version="windows";
@@ -167,7 +167,7 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
     --train_all "${file_dir}/${train_all_subset}" \
     --vocabulary "${file_dir}/${vocabulary}" \
     --n_clusters ${n_clusters} \
-    --serialization_dir "${classification_serialization_dir}" \.
+    --serialization_dir "${classification_serialization_dir}" \
 
   fi
 
@@ -202,7 +202,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
     --n_clusters ${n_clusters} \
     --k_classes ${k_classes} \
     --serialization_dir "${pretrain_serialization_dir}" \
-    --pretrain_model_filename "${classification_serialization_dir}/best.bin" \
+    --pretrain_model_filename null \
     --with_classification_cross_training ${with_classification_cross_training} \
 
 
