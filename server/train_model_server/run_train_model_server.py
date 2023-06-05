@@ -41,6 +41,39 @@ flask_app.add_url_rule(rule='/basic_intent_by_language', view_func=basic_intent_
 flask_app.add_url_rule(rule='/basic_intent_by_language_pivot_table', view_func=basic_intent_by_language_pivot_table_view_func, methods=['GET', 'POST'], endpoint='BasicIntentByLanguagePivotTable')
 
 
+settings.scheduler.init_app(flask_app)
+settings.scheduler.start()
+
+# run on 03:00:00 each day.
+settings.scheduler.add_job(
+    id='task_cnn_voicemail',
+    func=TaskCnnVoicemailFunc(),
+    trigger='cron',
+    day_of_week='0-6',
+    hour=3,
+    next_run_time=datetime.now() + timedelta(seconds=5)
+)
+# run on 04:00:00 each day.
+settings.scheduler.add_job(
+    id='task_cnn_voicemail_common',
+    func=TaskCnnVoicemailCommonFunc(),
+    trigger='cron',
+    day_of_week='0-6',
+    hour=4,
+    next_run_time=datetime.now() + timedelta(seconds=5)
+)
+# run on 04:30:00 each day.
+settings.scheduler.add_job(
+    id='task_basic_intent',
+    func=TaskCnnVoicemailCommonFunc(),
+    trigger='cron',
+    day_of_week='0-6',
+    hour=4,
+    minute=30,
+    next_run_time=datetime.now() + timedelta(seconds=5)
+)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -51,28 +84,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     logger.info('model server is already, port: {}'.format(args.port))
-
-    settings.scheduler.init_app(flask_app)
-    settings.scheduler.start()
-
-    # run on 03:00:00 each day.
-    settings.scheduler.add_job(
-        id='task_cnn_voicemail',
-        func=TaskCnnVoicemailFunc(),
-        trigger='cron',
-        day_of_week='0-6',
-        hour=3,
-        next_run_time=datetime.now() + timedelta(seconds=5)
-    )
-    # run on 04:00:00 each day.
-    settings.scheduler.add_job(
-        id='task_cnn_voicemail_common',
-        func=TaskCnnVoicemailCommonFunc(),
-        trigger='cron',
-        day_of_week='0-6',
-        hour=4,
-        next_run_time=datetime.now() + timedelta(seconds=5)
-    )
 
     # flask_app.run(
     #     host='0.0.0.0',

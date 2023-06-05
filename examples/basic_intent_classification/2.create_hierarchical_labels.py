@@ -15,22 +15,19 @@ import pandas as pd
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_dir', default='./', type=str)
     parser.add_argument('--dataset_filename', default='dataset.xlsx', type=str)
+    parser.add_argument('--hierarchical_labels_pkl', default='hierarchical_labels.pkl', type=str)
+
     args = parser.parse_args()
     return args
 
 
 def main():
     args = get_args()
-    dataset_filename = args.dataset_filename
-
-    file_dir = Path(args.file_dir)
-    file_dir.mkdir(exist_ok=True)
 
     n_hierarchical = 2
 
-    df = pd.read_excel(file_dir / dataset_filename)
+    df = pd.read_excel(args.dataset_filename)
     df = df[df['selected'] == 1]
 
     # 生成 hierarchical_labels
@@ -63,10 +60,10 @@ def main():
     else:
         hierarchical_labels = temp_hierarchical_labels
 
-    with open(file_dir / 'hierarchical_labels.pkl', 'wb') as f:
+    with open(args.hierarchical_labels_pkl, 'wb') as f:
         pickle.dump(hierarchical_labels, f)
 
-    with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
+    with open(args.hierarchical_labels_pkl, 'rb') as f:
         hierarchical_labels = pickle.load(f)
 
     print(hierarchical_labels)

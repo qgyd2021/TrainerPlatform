@@ -35,7 +35,7 @@ def get_args():
     python 7.faiss_test.py \
     --vocabulary ./file_folder_name/vocabulary \
     --all_vector ./file_folder_name/all_vector.json \
-    --pretrain_model_filename ./finetune/best.bin
+    --pretrain_model_filename ./file_folder_name/finetune/best.bin
     """
     parser = argparse.ArgumentParser()
 

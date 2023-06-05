@@ -11,6 +11,19 @@ verbose=true;
 stage=0 # start from 0 if you need to start from data preparation
 stop_stage=9
 
+file_folder_name=file_folder_name
+final_model_name=final_model_name
+dataset_filename="dataset.xlsx"
+nohup_name=nohup.out
+
+pretrained_bert_model_name=chinese-bert-wwm-ext
+
+train_subset=train.json
+valid_subset=valid.json
+hierarchical_labels_pkl=hierarchical_labels.pkl
+vocabulary=vocabulary
+labels_json=labels.json
+
 # cn
 #dataset_filename=dataset.xlsx
 #pretrained_bert_model_name=chinese-bert-wwm-ext
@@ -22,14 +35,13 @@ stop_stage=9
 #final_model_name=basic_intent_en
 
 # jp
-dataset_filename=dataset.xlsx
-pretrained_bert_model_name=bert-base-japanese
-final_model_name=basic_intent_jp
+#dataset_filename=dataset.xlsx
+#pretrained_bert_model_name=bert-base-japanese
+#final_model_name=basic_intent_jp
 
 test_output_filename=test_output.xlsx
 
 work_dir="$(pwd)"
-file_dir="$(pwd)"
 
 
 # parse options
@@ -61,9 +73,11 @@ while true; do
   esac
 done
 
-pretrained_models_dir="${work_dir}/../../pretrained_models";
+file_dir="${work_dir}/${file_folder_name}"
 final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
+pretrained_models_dir="${work_dir}/../../pretrained_models";
 
+mkdir -p "${file_dir}"
 
 $verbose && echo "system_version: ${system_version}"
 
@@ -136,10 +150,12 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   $verbose && echo "stage 0: prepare data without irrelevant domain (create train.json, test.json file)"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
-  --file_dir "${file_dir}" \
   --without_irrelevant_domain \
   --dataset_filename "${dataset_filename}" \
-  --do_lowercase
+  --do_lowercase \
+  --train_subset "${file_dir}/${train_subset}" \
+  --valid_subset "${file_dir}/${valid_subset}" \
+
 fi
 
 
@@ -148,7 +164,9 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
   cd "${work_dir}" || exit 1
   python3 2.create_hierarchical_labels.py \
   --file_dir "${file_dir}" \
-  --dataset_filename "${dataset_filename}"
+  --dataset_filename "${dataset_filename}" \
+  --hierarchical_labels_pkl "${file_dir}/${hierarchical_labels_pkl}" \
+
 fi
 
 
@@ -156,8 +174,11 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
   $verbose && echo "stage 2: create vocabulary (create vocabulary directory)"
   cd "${work_dir}" || exit 1
   python3 3.create_vocabulary.py \
-  --file_dir "${file_dir}" \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --hierarchical_labels_pkl "${file_dir}/${hierarchical_labels_pkl}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --labels_json "${file_dir}/${labels_json}" \
+
 fi
 
 
@@ -166,7 +187,12 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
   cd "${work_dir}" || exit 1
   python3 4.train_model.py \
   --file_dir "${file_dir}" \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --hierarchical_labels_pkl "${file_dir}/${hierarchical_labels_pkl}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --train_subset "${file_dir}/${train_subset}" \
+  --valid_subset "${file_dir}/${valid_subset}" \
+
 fi
 
 
@@ -178,9 +204,11 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
   test target_file || exit 1;
 
   python3 1.prepare_data.py \
-  --file_dir "${file_dir}" \
   --dataset_filename "${dataset_filename}" \
-  --do_lowercase
+  --do_lowercase \
+  --train_subset "${file_dir}/${train_subset}" \
+  --valid_subset "${file_dir}/${valid_subset}" \
+
 fi
 
 
@@ -193,8 +221,13 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
 
   python3 4.train_model.py \
   --file_dir "${file_dir}" \
-  --ckpt_path "lightning_logs/version_0/checkpoints/${target_file}" \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --ckpt_path "${file_dir}/lightning_logs/version_0/checkpoints/${target_file}" \
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --hierarchical_labels_pkl "${file_dir}/${hierarchical_labels_pkl}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --train_subset "${file_dir}/${train_subset}" \
+  --valid_subset "${file_dir}/${valid_subset}" \
+
 fi
 
 
@@ -207,11 +240,15 @@ if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
   cd "${work_dir}" || exit 1
 
   python3 5.test_model.py \
-  --file_dir "${file_dir}" \
-  --ckpt_path "lightning_logs/version_1/checkpoints/${target_file}" \
+  --ckpt_path "${file_dir}/lightning_logs/version_1/checkpoints/${target_file}" \
   --pretrained_model_dir "${pretrained_model_dir}" \
+  --hierarchical_labels_pkl "${file_dir}/${hierarchical_labels_pkl}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --train_subset "${file_dir}/${train_subset}" \
+  --valid_subset "${file_dir}/${valid_subset}" \
   --dataset_filename "${dataset_filename}" \
-  --output_filename "${test_output_filename}"
+  --output_filename "${file_dir}/${test_output_filename}"
+
 fi
 
 
@@ -225,8 +262,13 @@ if [ ${stage} -le 7 ] && [ ${stop_stage} -ge 7 ]; then
 
   python3 6.export_model.py \
   --file_dir "${file_dir}" \
-  --ckpt_path "lightning_logs/version_1/checkpoints/${target_file}" \
-  --pretrained_model_dir "${pretrained_model_dir}"
+  --ckpt_path "${file_dir}/lightning_logs/version_1/checkpoints/${target_file}" \
+  --pretrained_model_dir "${pretrained_model_dir}" \
+  --hierarchical_labels_pkl "${file_dir}/${hierarchical_labels_pkl}" \
+  --vocabulary "${file_dir}/${vocabulary}" \
+  --train_subset "${file_dir}/${train_subset}" \
+  --valid_subset "${file_dir}/${valid_subset}" \
+
 fi
 
 
@@ -247,6 +289,17 @@ if [ ${stage} -le 8 ] && [ ${stop_stage} -ge 8 ]; then
   cp -f "lightning_logs/version_1/checkpoints/${target_file}" "${final_model_dir}/${target_file}"
   cp "${test_output_filename}" "${final_model_dir}/${test_output_filename}"
   cp "${pretrained_model_dir}/vocab.txt" "${final_model_dir}/vocab.txt"
+
+  # zip
+  cd "${final_model_dir}/.." || exit 1;
+
+  if [ -e "${final_model_name}.zip" ]; then
+    rm -rf "${final_model_name}_backup.zip"
+    mv "${final_model_name}.zip" "${final_model_name}_backup.zip"
+  fi
+  # zip -r basic_intent_cn.zip basic_intent_cn
+  zip -r "${final_model_name}.zip" "${final_model_name}"
+  rm -rf "${final_model_name}"
 fi
 
 
@@ -260,14 +313,10 @@ if [ ${stage} -le 9 ] && [ ${stop_stage} -ge 9 ]; then
 fi
 
 
-if [ ${stage} -le 10 ] && [ ${stop_stage} -ge 10 ]; then
-  $verbose && echo "stage 10: git push to hugging face"
-  cd "${final_model_dir}/.." || exit 1
+if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
+  $verbose && echo "stage 10: clear file_dir"
+  cd "${work_dir}" || exit 1
 
-  cp -r "${final_model_name}" "BasicIntentModels/${final_model_name}"
-  cd "BasicIntentModels" || exit 1
-  git add .
-  git commit -m "[update]${final_model_name}"
-  git push origin main
+  rm -rf "${file_dir}";
+  rm -rf "${nohup_name}";
 fi
-

@@ -29,8 +29,16 @@ from toolbox.torchtext.models.text_classification.text_cnn import TextCNN
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file_dir', default='./', type=str)
+
     parser.add_argument('--ckpt_path', default=None, type=str)
     parser.add_argument('--pretrained_model_dir', required=True, type=str)
+
+    parser.add_argument('--hierarchical_labels_pkl', default='hierarchical_labels.pkl', type=str)
+    parser.add_argument('--vocabulary', default='vocabulary', type=str)
+
+    parser.add_argument('--train_subset', default='train.json', type=str)
+    parser.add_argument('--valid_subset', default='valid.json', type=str)
+
     args = parser.parse_args()
     return args
 
@@ -43,7 +51,7 @@ file_dir = Path(args.file_dir)
 file_dir.mkdir(exist_ok=True)
 
 
-vocabulary = Vocabulary.from_files(file_dir / 'vocabulary')
+vocabulary = Vocabulary.from_files(args.vocabulary)
 
 
 class CollateFunction(object):
@@ -89,7 +97,7 @@ collate_fn = CollateFunction(vocab=vocabulary, token_min_padding_length=5)
 tokenizer = PretrainedBertTokenizer(pretrained_model_dir)
 
 train_dataset = HierarchicalClassificationJsonDataset(
-    json_file=file_dir / 'train.json',
+    json_file=args.train_subset,
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -105,7 +113,7 @@ train_data_loader = DataLoader(
 )
 
 test_dataset = HierarchicalClassificationJsonDataset(
-    json_file=file_dir / 'test.json',
+    json_file=args.valid_subset,
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -146,7 +154,7 @@ class Model(pl.LightningModule):
             output_dim=128,
         )
 
-        with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
+        with open(args.hierarchical_labels_pkl, 'rb') as f:
             hierarchical_labels = pickle.load(f)
         self.hierarchical_softmax = HierarchicalSoftMax(
             classifier_input_dim=128,
@@ -239,7 +247,7 @@ class Model(pl.LightningModule):
 model = Model()
 if args.ckpt_path is not None:
     model = model.load_from_checkpoint(
-        file_dir / args.ckpt_path,
+        args.ckpt_path,
         map_location=torch.device('cpu')
     )
 model.train()

@@ -18,37 +18,34 @@ from project_settings import project_path
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_dir', default='./', type=str)
     parser.add_argument('--without_irrelevant_domain', action='store_true')
     parser.add_argument('--dataset_filename', default='dataset.xlsx', type=str)
     parser.add_argument('--do_lowercase', action='store_true')
+
+    parser.add_argument('--train_subset', default='train.json', type=str)
+    parser.add_argument('--valid_subset', default='valid.json', type=str)
+
     args = parser.parse_args()
     return args
 
 
 def main():
     args = get_args()
-    without_irrelevant_domain = args.without_irrelevant_domain
-    dataset_filename = args.dataset_filename
-    do_lowercase = args.do_lowercase
-
-    file_dir = Path(args.file_dir)
-    file_dir.mkdir(exist_ok=True)
 
     n_hierarchical = 2
 
-    df = pd.read_excel(file_dir / dataset_filename)
+    df = pd.read_excel(args.dataset_filename)
     df = df[df['selected'] == 1]
 
     dataset = list()
     for i, row in tqdm(df.iterrows(), total=len(df)):
         text = row['text']
         label0 = row['label0']
-        if without_irrelevant_domain and label0 == '无关领域':
+        if args.without_irrelevant_domain and label0 == '无关领域':
             continue
 
         text = str(text)
-        if do_lowercase:
+        if args.do_lowercase:
             text = text.lower()
 
         labels = {'label{}'.format(idx): str(row['label{}'.format(idx)]) for idx in range(n_hierarchical)}
@@ -67,11 +64,10 @@ def main():
 
     dataset = list(sorted(dataset, key=lambda x: x['random1'], reverse=True))
 
-    f_train = open(file_dir / 'train.json', 'w', encoding='utf-8')
-    f_test = open(file_dir / 'test.json', 'w', encoding='utf-8')
+    f_train = open(args.train_subset, 'w', encoding='utf-8')
+    f_test = open(args.valid_subset, 'w', encoding='utf-8')
 
     for row in tqdm(dataset):
-        # print(row)
 
         flag = row['flag']
         row = json.dumps(row, ensure_ascii=False)

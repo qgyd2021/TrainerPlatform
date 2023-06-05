@@ -30,28 +30,27 @@ from toolbox.torchtext.models.text_classification.text_cnn import TextCNN
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_dir', default='./', type=str)
     parser.add_argument('--ckpt_path', default=None, type=str)
     parser.add_argument('--pretrained_model_dir', required=True, type=str)
+
+    parser.add_argument('--hierarchical_labels_pkl', default='hierarchical_labels.pkl', type=str)
+    parser.add_argument('--vocabulary', default='vocabulary', type=str)
+
+    parser.add_argument('--train_subset', default='train.json', type=str)
+    parser.add_argument('--valid_subset', default='valid.json', type=str)
+
     parser.add_argument('--dataset_filename', default='dataset.xlsx', type=str)
     parser.add_argument('--output_filename', default='test_output.xlsx', type=str)
     parser.add_argument('--export_limit', default=None, type=int)
+
     args = parser.parse_args()
     return args
 
 
 args = get_args()
-ckpt_path = args.ckpt_path
-pretrained_model_dir = args.pretrained_model_dir
-dataset_filename = args.dataset_filename
-output_filename = args.output_filename
 export_limit = args.export_limit or float('inf')
 
-file_dir = Path(args.file_dir)
-file_dir.mkdir(exist_ok=True)
-
-
-vocabulary = Vocabulary.from_files(file_dir / 'vocabulary')
+vocabulary = Vocabulary.from_files(args.vocabulary)
 
 
 class CollateFunction(object):
@@ -94,10 +93,10 @@ class CollateFunction(object):
 collate_fn = CollateFunction(vocab=vocabulary, token_min_padding_length=5)
 
 
-tokenizer = PretrainedBertTokenizer(pretrained_model_dir)
+tokenizer = PretrainedBertTokenizer(args.pretrained_model_dir)
 
 train_dataset = HierarchicalClassificationJsonDataset(
-    json_file=file_dir / 'train.json',
+    json_file=args.train_subset,
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -113,7 +112,7 @@ train_data_loader = DataLoader(
 )
 
 test_dataset = HierarchicalClassificationJsonDataset(
-    json_file=file_dir / 'test.json',
+    json_file=args.valid_subset,
     tokenizer=tokenizer,
     n_hierarchical=2,
 )
@@ -154,7 +153,7 @@ class Model(pl.LightningModule):
             output_dim=128,
         )
 
-        with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
+        with open(args.hierarchical_labels_pkl, 'rb') as f:
             hierarchical_labels = pickle.load(f)
         self.hierarchical_softmax = HierarchicalSoftMax(
             classifier_input_dim=128,
@@ -186,7 +185,7 @@ class Model(pl.LightningModule):
 model = Model()
 if args.ckpt_path is not None:
     model = model.load_from_checkpoint(
-        file_dir / args.ckpt_path,
+        args.ckpt_path,
         map_location=torch.device('cpu')
     )
 model.eval()
@@ -200,7 +199,7 @@ def main():
 
     index_to_token = vocabulary.get_index_to_token_vocabulary(namespace='labels')
 
-    df = pd.read_excel(file_dir / dataset_filename)
+    df = pd.read_excel(args.dataset_filename)
 
     result = list()
     for i, row in tqdm(df.iterrows(), total=len(df)):
@@ -239,7 +238,7 @@ def main():
             break
 
     result = pd.DataFrame(result)
-    result.to_excel(file_dir / output_filename, index=False, encoding='utf_8_sig')
+    result.to_excel(args.output_filename, index=False, encoding='utf_8_sig')
     return
 
 

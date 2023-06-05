@@ -23,6 +23,7 @@ environment = EnvironmentManager(
 
 port = environment.get(key='port', default=9180, dtype=int)
 
+# task
 task_cnn_voicemail_json_settings_file = environment.get(
     key='task_cnn_voicemail_json_settings_file',
     default=os.path.join(project_path, 'server/train_model_server/json_settings/task_cnn_voicemail.json'),
@@ -33,6 +34,12 @@ task_cnn_voicemail_common_json_settings_file = environment.get(
     default=os.path.join(project_path, 'server/train_model_server/json_settings/task_cnn_voicemail_common.json'),
     dtype=str
 )
+task_basic_intent_json_settings_file = environment.get(
+    key='task_basic_intent_json_settings_file',
+    default=os.path.join(project_path, 'server/train_model_server/json_settings/task_basic_intent.json'),
+    dtype=str
+)
+
 trained_models_dir = environment.get(
     key='trained_models_dir',
     default=os.path.join(project_path, 'trained_models'),

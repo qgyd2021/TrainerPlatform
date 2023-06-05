@@ -18,20 +18,19 @@ from toolbox.torch.utils.data.vocabulary import Vocabulary
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_dir', default='./', type=str)
     parser.add_argument('--pretrained_model_dir', required=True, type=str)
+    parser.add_argument('--hierarchical_labels_pkl', default='hierarchical_labels.pkl', type=str)
+    parser.add_argument('--vocabulary', default='vocabulary', type=str)
+    parser.add_argument('--labels_json', default='labels.json', type=str)
+
     args = parser.parse_args()
     return args
 
 
 def main():
     args = get_args()
-    pretrained_model_dir = args.pretrained_model_dir
 
-    file_dir = Path(args.file_dir)
-    file_dir.mkdir(exist_ok=True)
-
-    with open(file_dir / 'hierarchical_labels.pkl', 'rb') as f:
+    with open(args.hierarchical_labels_pkl, 'rb') as f:
         hierarchical_labels = pickle.load(f)
     print(hierarchical_labels)
     # 深度遍历
@@ -59,19 +58,19 @@ def main():
         vocabulary.add_token_to_namespace(label, namespace='labels')
 
     vocabulary.set_from_file(
-        filename=os.path.join(pretrained_model_dir, 'vocab.txt'),
+        filename=os.path.join(args.pretrained_model_dir, 'vocab.txt'),
         is_padded=False,
         oov_token='[UNK]',
         namespace='tokens',
     )
-    vocabulary.save_to_files(file_dir / 'vocabulary')
+    vocabulary.save_to_files(args.vocabulary)
 
     # labels.json
     token_to_index = vocabulary.get_token_to_index_vocabulary(namespace='labels')
     labels = list()
     for k, v in sorted(token_to_index.items(), key=lambda x: x[1]):
         labels.append(k)
-    with open(file_dir / 'labels.json', 'w', encoding='utf-8') as f:
+    with open(args.labels_json, 'w', encoding='utf-8') as f:
         json.dump(labels, f, indent=4, ensure_ascii=False)
 
     print('注意检查 Vocabulary 中标签的顺序与 hierarchical_labels 是否一致. ')
