@@ -24,6 +24,31 @@ class TaskBasicIntentFunc(object):
         self.dataset_dir: Path = None
         self.languages: List[str] = list()
 
+    @staticmethod
+    def get_file_folder_name(language: str):
+        language = language.lower()
+        result = 'file_dir_{}'.format(language)
+        return result
+
+    @staticmethod
+    def get_final_model_name(language: str):
+        language_map = {
+            'chinese': 'cn',
+            'english': 'en',
+        }
+        language = language.lower()
+
+        language = language_map[language]
+
+        result = 'basic_intent_{}'.format(language)
+        return result
+
+    @staticmethod
+    def get_nohup_name(language: str):
+        language = language.lower()
+        result = 'nohup_{}.out'.format(language)
+        return result
+
     def read_basic_intent_settings(self, settings_file: str):
         with open(settings_file, 'rb') as f:
             basic_intent_settings = json.load(f)
