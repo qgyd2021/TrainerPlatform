@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-# sh run.sh --stage -1 --stop_stage 9
+# sh run.sh --system_version centos --stage -1 --stop_stage 10 --file_folder_name file_dir_cn --final_model_name basic_intent_cn --dataset_filename /data/tianxing/PycharmProjects/datasets/basic_intent/chinese/intent_classification_cn.xlsx --pretrained_bert_model_name chinese-bert-wwm-ext
+
 # sh run.sh --stage 7 --stop_stage 8
 # sh run.sh --stage 10 --stop_stage 11
+# sh run.sh --stage 6 --stop_stage 6
 # sh run.sh --stage 6 --stop_stage 6
 
 # params
@@ -147,7 +149,7 @@ fi
 
 
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
-  $verbose && echo "stage 0: prepare data without irrelevant domain (create train.json, test.json file)"
+  $verbose && echo "stage 0: prepare data without irrelevant domain (create train.json, valid.json file)"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
   --without_irrelevant_domain \
@@ -163,7 +165,6 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
   $verbose && echo "stage 1: create hierarchical labels dictionary (create hierarchical_labels.pkl file)"
   cd "${work_dir}" || exit 1
   python3 2.create_hierarchical_labels.py \
-  --file_dir "${file_dir}" \
   --dataset_filename "${dataset_filename}" \
   --hierarchical_labels_pkl "${file_dir}/${hierarchical_labels_pkl}" \
 
@@ -313,7 +314,7 @@ if [ ${stage} -le 9 ] && [ ${stop_stage} -ge 9 ]; then
 fi
 
 
-if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
+if [ ${stage} -le 10 ] && [ ${stop_stage} -ge 10 ]; then
   $verbose && echo "stage 10: clear file_dir"
   cd "${work_dir}" || exit 1
 
