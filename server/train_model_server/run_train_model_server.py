@@ -70,16 +70,7 @@ settings.scheduler.add_job(
     func=TaskCnnVoicemailCommonFunc(),
     trigger='cron',
     day_of_week='0-6',
-    hour=4,
-    # next_run_time=datetime.now() + timedelta(seconds=5)
-)
-# run on 04:30:00 each day.
-settings.scheduler.add_job(
-    id='task_basic_intent',
-    func=TaskCnnVoicemailCommonFunc(),
-    trigger='cron',
-    day_of_week='0-6',
-    hour=4,
+    hour=3,
     minute=30,
     # next_run_time=datetime.now() + timedelta(seconds=5)
 )
