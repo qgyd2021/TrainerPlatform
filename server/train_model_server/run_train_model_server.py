@@ -23,6 +23,7 @@ from server.train_model_server.view_func.basic_intent import basic_intent_by_lan
 from server.train_model_server.view_func.cnn_voicemail import cnn_voicemail_by_language_view_func, \
     cnn_voicemail_by_language_pivot_table_view_func, \
     cnn_voicemail_common_view_func, cnn_voicemail_view_func, cnn_voicemail_correction_view_func
+from server.train_model_server.tasks.task_basic_intent import TaskBasicIntentFunc
 from server.train_model_server.tasks.task_cnn_voicemail import TaskCnnVoicemailFunc, TaskCnnVoicemailCommonFunc
 
 logger = logging.getLogger('server')
@@ -44,6 +45,16 @@ flask_app.add_url_rule(rule='/basic_intent_by_language_pivot_table', view_func=b
 settings.scheduler.init_app(flask_app)
 settings.scheduler.start()
 
+# run on 02:30:00 each day.
+settings.scheduler.add_job(
+    id='task_basic_intent',
+    func=TaskBasicIntentFunc(),
+    trigger='cron',
+    day_of_week='0-6',
+    hour=2,
+    minute=30,
+    next_run_time=datetime.now() + timedelta(seconds=5)
+)
 # run on 03:00:00 each day.
 settings.scheduler.add_job(
     id='task_cnn_voicemail',
@@ -70,7 +81,7 @@ settings.scheduler.add_job(
     day_of_week='0-6',
     hour=4,
     minute=30,
-    next_run_time=datetime.now() + timedelta(seconds=5)
+    # next_run_time=datetime.now() + timedelta(seconds=5)
 )
 
 
