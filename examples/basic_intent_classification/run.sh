@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# sh run.sh --system_version centos --stage -1 --stop_stage 10 --file_folder_name file_dir_cn --final_model_name basic_intent_cn --dataset_filename /data/tianxing/PycharmProjects/datasets/basic_intent/chinese/intent_classification_cn.xlsx --pretrained_bert_model_name chinese-bert-wwm-ext
+# sh run.sh --system_version centos --stage 6 --stop_stage 10 --file_folder_name file_dir_cn --final_model_name basic_intent_cn --dataset_filename /data/tianxing/PycharmProjects/datasets/basic_intent/chinese/intent_classification_cn.xlsx --pretrained_bert_model_name chinese-bert-wwm-ext
 
 # sh run.sh --stage 7 --stop_stage 8
 # sh run.sh --stage 10 --stop_stage 11
@@ -149,7 +149,7 @@ fi
 
 
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
-  $verbose && echo "stage 0: prepare data without irrelevant domain (create train.json, valid.json file)"
+  $verbose && echo "stage 0: prepare data without irrelevant domain (create train subset, valid subset file)"
   cd "${work_dir}" || exit 1
   python3 1.prepare_data.py \
   --without_irrelevant_domain \

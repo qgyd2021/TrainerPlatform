@@ -10,6 +10,8 @@ import re
 import sys
 from typing import List
 
+import pandas as pd
+
 from toolbox.os.command import Command
 from project_settings import project_path
 from server.train_model_server import settings
@@ -49,6 +51,18 @@ class TaskBasicIntentFunc(object):
         result = 'nohup_{}.out'.format(language)
         return result
 
+    @staticmethod
+    def get_pretrained_bert_model_name(language: str):
+        model_map = {
+            'chinese': 'chinese-bert-wwm-ext',
+            'english': 'bert-base-uncased',
+            'japanese': 'bert-base-japanese',
+            'vietnamese': 'bert-base-vietnamese-uncased'
+        }
+        language = language.lower()
+        result = model_map[language]
+        return result
+
     def read_basic_intent_settings(self, settings_file: str):
         with open(settings_file, 'rb') as f:
             basic_intent_settings = json.load(f)
@@ -69,20 +83,21 @@ class TaskBasicIntentFunc(object):
         self.read_basic_intent_settings(settings_file=settings.task_basic_intent_json_settings_file)
 
         for language in self.languages:
-            filename_pattern = self.dataset_dir / language / 'wav_finished/*/*.wav'
-            filename_pattern = str(filename_pattern)
-            filename_list = glob(filename_pattern)
+            filename = self.dataset_dir / language / 'dataset.xlsx'
+
+            df = pd.read_excel(filename)
+            df = df[df['selected'] == 1]
 
             last_count = self.task_basic_intent_to_last_count[language]
-            this_count = len(filename_list)
+            this_count = len(df)
 
             logger.debug(
                 'task basic intent, language: {}, '
                 'last_count: {}, this_count: {}'.format(
-                    language, last_count, len(filename_list)))
+                    language, last_count, this_count))
 
             if this_count - last_count > 5000:
-                task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
+                task_work_dir = os.path.join(project_path, 'examples/basic_intent_classification')
 
                 self.task_basic_intent_to_last_count[language] = this_count
 
@@ -90,13 +105,14 @@ class TaskBasicIntentFunc(object):
                     sh run.sh \
                     --stage -1 --stop_stage 9 \
                     --system_version {system_version} \
-                    --filename_patterns {filename_pattern1} \
+                    --dataset_filename {dataset_filename} \
+                    --pretrained_bert_model_name {pretrained_bert_model_name} \
                     --file_folder_name {file_folder_name} \
                     --final_model_name {final_model_name} \
                     > {nohup_name} &""".format(
                     system_version='centos',
-                    filename_pattern1=filename_pattern.replace(r'*', r'\*'),
-                    language=language.replace('-', '_').lower(),
+                    dataset_filename=filename,
+                    pretrained_bert_model_name=self.get_pretrained_bert_model_name(language),
                     file_folder_name=self.get_file_folder_name(language),
                     final_model_name=self.get_final_model_name(language),
                     nohup_name=self.get_nohup_name(language)

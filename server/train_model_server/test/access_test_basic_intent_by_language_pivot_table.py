@@ -18,7 +18,7 @@ def get_args():
     parser.add_argument('--host', default='127.0.0.1', type=str)
     # parser.add_argument('--host', default='10.75.27.247', type=str)
     parser.add_argument('--port', default=9180, type=int)
-    parser.add_argument('--language', default='en', type=str)
+    parser.add_argument('--language', default='chinese', type=str)
 
     args = parser.parse_args()
     return args
