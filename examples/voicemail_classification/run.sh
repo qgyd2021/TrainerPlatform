@@ -193,6 +193,8 @@ fi
 
 if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
   $verbose && echo "stage 6: clear file_dir"
+  cd "${work_dir}" || exit 1
+
   rm -rf "${file_dir}";
   rm -rf "${nohup_name}";
 fi

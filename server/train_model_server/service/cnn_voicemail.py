@@ -9,7 +9,6 @@ import time
 from typing import Dict, List
 import zipfile
 
-from cacheout import Cache
 import numpy as np
 import pandas as pd
 import torch
@@ -25,7 +24,7 @@ logger = logging.getLogger('server')
 class CnnVoicemailByLanguageService(object):
     def __init__(self, trained_models_dir: str):
         self.trained_models_dir = Path(trained_models_dir)
-        self.models = Cache(maxsize=256, ttl=1 * 60 * 60, timer=time.time)
+        self.models = dict()
 
     def load_model(self, language: str):
         zip_file = self.trained_models_dir / '{}.zip'.format(TaskCnnVoicemailFunc.get_final_model_name(language))
@@ -59,12 +58,12 @@ class CnnVoicemailByLanguageService(object):
             correction = correction[['filename', 'correct', 'predict', 'label']]
             correction = correction.to_dict(orient='records')
 
-            self.models.set(language, {
+            self.models[language] = {
                 'model': model,
                 'vocabulary': vocabulary,
                 'pivot_table': pivot_table,
                 'correction': correction,
-            })
+            }
 
             shutil.rmtree(tgt_path)
         return
@@ -114,6 +113,9 @@ class CnnVoicemailByLanguageService(object):
         }
         return result
 
+    def release_cache(self):
+        self.models = dict()
+
 
 _cnn_voicemail_by_language_service = None
 
@@ -130,7 +132,7 @@ def get_cnn_voicemail_by_language_service_instance():
 class CnnVoicemailCommonService(object):
     def __init__(self, trained_models_dir: str):
         self.trained_models_dir = Path(trained_models_dir)
-        self.models = Cache(maxsize=256, ttl=1 * 60 * 60, timer=time.time)
+        self.models = dict()
 
     def load_model(self, key: str = 'default'):
         logger.info('load cnn voicemail common model')
@@ -158,11 +160,11 @@ class CnnVoicemailCommonService(object):
             for row in pivot_table[('count', 'correct')].items():
                 result.append(('_'.join(row[0]), int(row[1])))
 
-            self.models.set(key, {
+            self.models[key] = {
                 'model': model,
                 'vocabulary': vocabulary,
                 'pivot_table': result,
-            })
+            }
 
             shutil.rmtree(tgt_path)
 
@@ -204,6 +206,9 @@ class CnnVoicemailCommonService(object):
             'prob': round(prob, 4)
         }
         return result
+
+    def release_cache(self):
+        self.models = dict()
 
 
 _cnn_voicemail_common_service = None

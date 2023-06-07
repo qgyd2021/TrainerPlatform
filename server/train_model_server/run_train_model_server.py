@@ -25,6 +25,9 @@ from server.train_model_server.view_func.cnn_voicemail import cnn_voicemail_by_l
     cnn_voicemail_common_view_func, cnn_voicemail_view_func, cnn_voicemail_correction_view_func
 from server.train_model_server.tasks.task_basic_intent import TaskBasicIntentFunc
 from server.train_model_server.tasks.task_cnn_voicemail import TaskCnnVoicemailFunc, TaskCnnVoicemailCommonFunc
+from server.train_model_server.service.basic_intent import get_basic_intent_by_language_service_instance
+from server.train_model_server.service.cnn_voicemail import get_cnn_voicemail_common_service_instance, \
+    get_cnn_voicemail_by_language_service_instance
 
 logger = logging.getLogger('server')
 
@@ -45,6 +48,20 @@ flask_app.add_url_rule(rule='/basic_intent_by_language_pivot_table', view_func=b
 settings.scheduler.init_app(flask_app)
 settings.scheduler.start()
 
+
+def release_cache():
+    get_basic_intent_by_language_service_instance().release_cache()
+    get_cnn_voicemail_common_service_instance().release_cache()
+    get_cnn_voicemail_by_language_service_instance().release_cache()
+
+
+settings.scheduler.add_job(
+    id='task_release_cache',
+    func=release_cache,
+    trigger='interval',
+    seconds=1 * 60,
+    # next_run_time=datetime.now() + timedelta(seconds=5)
+)
 # run on 02:30:00 each day.
 settings.scheduler.add_job(
     id='task_basic_intent',

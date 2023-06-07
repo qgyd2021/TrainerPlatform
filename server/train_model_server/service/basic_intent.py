@@ -9,7 +9,6 @@ import time
 from typing import Dict, List
 import zipfile
 
-from cacheout import Cache
 import numpy as np
 import pandas as pd
 import torch
@@ -27,7 +26,7 @@ class BasicIntentByLanguageService(object):
                  trained_models_dir: str
                  ):
         self.trained_models_dir = Path(trained_models_dir)
-        self.models = Cache(maxsize=256, ttl=1 * 60 * 60, timer=time.time)
+        self.models = dict()
 
     @staticmethod
     def get_final_model_name(language: str):
@@ -79,12 +78,12 @@ class BasicIntentByLanguageService(object):
 
             pivot_table = list(sorted(pivot_table.values(), key=lambda x: x[1], reverse=True))
 
-            self.models.set(language, {
+            self.models[language] = {
                 'model': model,
                 'vocabulary': vocabulary,
                 'tokenizer': tokenizer,
                 'pivot_table': pivot_table,
-            })
+            }
 
             shutil.rmtree(tgt_path)
 
@@ -133,6 +132,9 @@ class BasicIntentByLanguageService(object):
             'prob': round(prob, 4)
         }
         return result
+
+    def release_cache(self):
+        self.models = dict()
 
 
 _basic_intent_by_language_service = None

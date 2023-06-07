@@ -6,8 +6,16 @@
             "start_count": 5000
         },
         {
+            "language": "en-US",
+            "start_count": 5000
+        },
+        {
             "language": "id-ID",
             "start_count": 7000
+        },
+        {
+            "language": "ja-JP",
+            "start_count": 5000
         },
         {
             "language": "th-TH",
