@@ -210,9 +210,6 @@ def main():
         label1 = row['label1']
         label = '{}_{}'.format(label0, label1)
 
-        if source not in ['conversation']:
-            continue
-
         instance = train_dataset.text_to_instance(text)
         instance['labels'] = '无关领域_无关领域'
 
