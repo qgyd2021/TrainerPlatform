@@ -59,7 +59,7 @@ settings.scheduler.add_job(
     id='task_release_cache',
     func=release_cache,
     trigger='interval',
-    seconds=1 * 60,
+    seconds=1 * 60 * 60,
     # next_run_time=datetime.now() + timedelta(seconds=5)
 )
 # run on 02:30:00 each day.
@@ -70,7 +70,7 @@ settings.scheduler.add_job(
     day_of_week='0-6',
     hour=2,
     minute=30,
-    next_run_time=datetime.now() + timedelta(seconds=5)
+    # next_run_time=datetime.now() + timedelta(seconds=5)
 )
 # run on 03:00:00 each day.
 settings.scheduler.add_job(
