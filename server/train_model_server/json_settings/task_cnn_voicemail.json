@@ -6,8 +6,12 @@
             "start_count": 5000
         },
         {
-            "language": "en-US",
+            "language": "en-PH",
             "start_count": 0
+        },
+        {
+            "language": "en-US",
+            "start_count": 5000
         },
         {
             "language": "id-ID",
