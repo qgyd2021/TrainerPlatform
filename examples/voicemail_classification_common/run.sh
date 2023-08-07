@@ -175,10 +175,10 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
   cp "${file_dir}/evaluation.xlsx" "${final_model_dir}/evaluation.xlsx"
   cp "${file_dir}/pytorch_model.bin" "${final_model_dir}/pytorch_model.bin"
   cp "${file_dir}/cnn_voicemail.pth" "${final_model_dir}/cnn_voicemail.pth"
-#  cp "${file_dir}/trace_model.zip" "${final_model_dir}/trace_model.zip"
-#  cp "${file_dir}/trace_quant_model.zip" "${final_model_dir}/trace_quant_model.zip"
-#  cp "${file_dir}/script_model.zip" "${final_model_dir}/script_model.zip"
-#  cp "${file_dir}/script_quant_model.zip" "${final_model_dir}/script_quant_model.zip"
+  cp "${file_dir}/trace_model.zip" "${final_model_dir}/trace_model.zip"
+  cp "${file_dir}/trace_quant_model.zip" "${final_model_dir}/trace_quant_model.zip"
+  cp "${file_dir}/script_model.zip" "${final_model_dir}/script_model.zip"
+  cp "${file_dir}/script_quant_model.zip" "${final_model_dir}/script_quant_model.zip"
   cp -r "${file_dir}/vocabulary" "${final_model_dir}/vocabulary"
 
   cd "${final_model_dir}/.." || exit 1;
