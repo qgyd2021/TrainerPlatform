@@ -3,22 +3,30 @@
     "tasks": [
         {
             "language": "es-MX",
-            "start_count": 0
+            "start_count": 5000
         },
         {
             "language": "en-PH",
             "start_count": 0
         },
         {
-            "language": "en-US",
+            "language": "en-SG",
             "start_count": 0
+        },
+        {
+            "language": "en-US",
+            "start_count": 5000
         },
         {
             "language": "id-ID",
-            "start_count": 0
+            "start_count": 7000
         },
         {
             "language": "ja-JP",
+            "start_count": 0
+        },
+        {
+            "language": "ms-MY",
             "start_count": 0
         },
         {
@@ -31,7 +39,7 @@
         },
         {
             "language": "zh-TW",
-            "start_count": 0
+            "start_count": 20000
         }
     ]
 }
