@@ -74,7 +74,7 @@ class TaskCnnVoicemailFunc(object):
                 'last_count: {}, this_count: {}'.format(
                     language, last_count, len(filename_list)))
 
-            if this_count - last_count > 5000:
+            if this_count - last_count > 2000:
                 task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
 
                 self.task_cnn_voicemail_to_last_count[language] = this_count
