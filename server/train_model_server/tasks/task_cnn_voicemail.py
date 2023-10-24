@@ -60,7 +60,9 @@ class TaskCnnVoicemailFunc(object):
 
     def __call__(self):
         self.read_cnn_voicemail_settings(settings_file=settings.task_cnn_voicemail_json_settings_file)
+        task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
 
+        cmd_list = list()
         for language in self.languages:
             filename_pattern = self.dataset_dir / language / 'wav_finished/*/*.wav'
             filename_pattern = str(filename_pattern)
@@ -75,8 +77,6 @@ class TaskCnnVoicemailFunc(object):
                     language, last_count, len(filename_list)))
 
             if this_count - last_count > 2000:
-                task_work_dir = os.path.join(project_path, 'examples/voicemail_classification')
-
                 self.task_cnn_voicemail_to_last_count[language] = this_count
 
                 cmd = """nohup \
@@ -96,10 +96,13 @@ class TaskCnnVoicemailFunc(object):
                 ).strip()
                 cmd = re.sub(r'[\u0020]{4,}', ' ', cmd)
 
-                logger.info('cmd: {}'.format(cmd))
-                if sys.platform not in ('win32', ):
-                    Command.cd(task_work_dir)
-                    Command.system(cmd)
+                cmd_list.append(cmd)
+        cmd = " || ".join(cmd_list)
+        cmd = "nohup {} &".format(cmd)
+        logger.info('cmd: {}'.format(cmd))
+        if sys.platform not in ('win32', ):
+            Command.cd(task_work_dir)
+            Command.system(cmd)
 
 
 class TaskCnnVoicemailCommonFunc(object):
