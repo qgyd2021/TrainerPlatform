@@ -108,13 +108,13 @@ class TaskCnnVoicemailFunc(object):
                 #     nohup_name=self.get_nohup_name(language)
                 # ).strip()
 
-                cmd = re.sub(r'[\u0020]{4,}', ' ', cmd)
+                cmd = re.sub(r"[\u0020]{4,}", " ", cmd)
 
                 cmd_list.append(cmd)
-        cmd = " || ".join(cmd_list)
+        cmd = "; ".join(cmd_list)
         cmd = "nohup {} > nohup.out &".format(cmd)
-        logger.info('cmd: {}'.format(cmd))
-        if sys.platform not in ('win32', ):
+        logger.info("cmd: {}".format(cmd))
+        if sys.platform not in ("win32", ):
             Command.cd(task_work_dir)
             Command.system(cmd)
 

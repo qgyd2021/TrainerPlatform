@@ -59,6 +59,7 @@ final_model_dir="${work_dir}/../../trained_models/${final_model_name}";
 
 
 $verbose && echo "system_version: ${system_version}"
+$verbose && echo "file_folder_name: ${file_folder_name}"
 
 if [ $system_version == "windows" ]; then
   #source /data/local/bin/TrainerPlatform/bin/activate
