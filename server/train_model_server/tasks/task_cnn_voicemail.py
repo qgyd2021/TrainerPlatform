@@ -112,7 +112,7 @@ class TaskCnnVoicemailFunc(object):
 
                 cmd_list.append(cmd)
         cmd = " || ".join(cmd_list)
-        cmd = "nohup {} &".format(cmd)
+        cmd = "nohup {} > nohup.out &".format(cmd)
         logger.info('cmd: {}'.format(cmd))
         if sys.platform not in ('win32', ):
             Command.cd(task_work_dir)
