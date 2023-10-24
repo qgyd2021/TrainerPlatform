@@ -79,21 +79,35 @@ class TaskCnnVoicemailFunc(object):
             if this_count - last_count > 2000:
                 self.task_cnn_voicemail_to_last_count[language] = this_count
 
-                cmd = """nohup \
-                    sh run.sh \
+                cmd = """sh run.sh \
                     --stage -1 --stop_stage 9 \
                     --system_version {system_version} \
                     --filename_patterns {filename_pattern1} \
                     --file_folder_name {file_folder_name} \
-                    --final_model_name {final_model_name} \
-                    > {nohup_name} &""".format(
+                    --final_model_name {final_model_name}""".format(
                     system_version='centos',
                     filename_pattern1=filename_pattern.replace(r'*', r'\*'),
                     language=language.replace('-', '_').lower(),
                     file_folder_name=self.get_file_folder_name(language),
                     final_model_name=self.get_final_model_name(language),
-                    nohup_name=self.get_nohup_name(language)
+                    # nohup_name=self.get_nohup_name(language)
                 ).strip()
+                # cmd = """nohup \
+                #     sh run.sh \
+                #     --stage -1 --stop_stage 9 \
+                #     --system_version {system_version} \
+                #     --filename_patterns {filename_pattern1} \
+                #     --file_folder_name {file_folder_name} \
+                #     --final_model_name {final_model_name} \
+                #     > {nohup_name} &""".format(
+                #     system_version='centos',
+                #     filename_pattern1=filename_pattern.replace(r'*', r'\*'),
+                #     language=language.replace('-', '_').lower(),
+                #     file_folder_name=self.get_file_folder_name(language),
+                #     final_model_name=self.get_final_model_name(language),
+                #     nohup_name=self.get_nohup_name(language)
+                # ).strip()
+
                 cmd = re.sub(r'[\u0020]{4,}', ' ', cmd)
 
                 cmd_list.append(cmd)
