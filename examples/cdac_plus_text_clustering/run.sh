@@ -12,8 +12,8 @@ stop_stage=9
 work_dir="$(pwd)"
 file_folder_name=file_folder_name
 
-basic_intent_classification_datasets_dir=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification
-intent_classification_xlsx=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/basic_intent_classification/intent_classification_cn.xlsx
+basic_intent_classification_datasets_dir=/data/tianxing/PycharmProjects/TrainerPlatform/datasets
+intent_classification_xlsx=/data/tianxing/PycharmProjects/TrainerPlatform/datasets/waba_intent_classification.xlsx
 
 train_labeled_subset=train_labeled.json
 valid_labeled_subset=valid_labeled.json
@@ -22,7 +22,7 @@ dataset_excel=dataset.xlsx
 vocabulary=vocabulary
 all_vector=all_vector.json
 
-pretrained_bert_model_name=chinese-bert-wwm-ext
+pretrained_bert_model_name=bert-base-uncased
 
 n_clusters=200
 k_classes=14
