@@ -12,12 +12,15 @@ sys.path.append(os.path.join(pwd, '../../'))
 import pandas as pd
 from tqdm import tqdm
 
+from project_settings import project_path
+
 
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--intent_classification_xlsx',
-        default='datasets/basic_intent_classification/intent_classification_cn.xlsx',
+        # default='datasets/basic_intent_classification/intent_classification_cn.xlsx',
+        default=project_path / "datasets/waba_intent_classification.xlsx",
         type=str
     )
     parser.add_argument('--train_labeled', default='train_labeled.json', type=str)

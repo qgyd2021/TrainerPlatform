@@ -17,6 +17,9 @@ trained_models/
 **/vocabulary
 **/*file_dir*
 **/*output_dir*
+**/*train*
+**/*valid*
+**/*test*
 
 **/*.bib
 **/*.bin
