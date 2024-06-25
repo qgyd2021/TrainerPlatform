@@ -1,0 +1,49 @@
+{
+    "dataset_dir": "/data/tianxing/PycharmProjects/datasets/voicemail",
+    "tasks": [
+        {
+            "language": "es-MX",
+            "start_count": 0
+        },
+        {
+            "language": "es-PE",
+            "start_count": 0
+        },
+        {
+            "language": "en-PH",
+            "start_count": 0
+        },
+        {
+            "language": "en-SG",
+            "start_count": 0
+        },
+        {
+            "language": "en-US",
+            "start_count": 0
+        },
+        {
+            "language": "id-ID",
+            "start_count": 0
+        },
+        {
+            "language": "ja-JP",
+            "start_count": 0
+        },
+        {
+            "language": "ko-KR",
+            "start_count": 0
+        },
+        {
+            "language": "ms-MY",
+            "start_count": 0
+        },
+        {
+            "language": "th-TH",
+            "start_count": 0
+        },
+        {
+            "language": "zh-TW",
+            "start_count": 0
+        }
+    ]
+}

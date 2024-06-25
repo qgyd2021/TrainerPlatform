@@ -1,0 +1,13 @@
+{
+    "dataset_dir": "/data/tianxing/PycharmProjects/datasets/basic_intent",
+    "tasks": [
+        {
+            "language": "chinese",
+            "start_count": 5000
+        },
+        {
+            "language": "english",
+            "start_count": 7000
+        }
+    ]
+}

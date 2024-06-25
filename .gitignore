@@ -19,9 +19,6 @@ trained_models/
 **/*file_folder_name*
 **/*file_dir*
 **/*output_dir*
-**/*train*
-**/*valid*
-**/*test*
 
 **/*.bib
 **/*.bin

@@ -1,0 +1,5 @@
+{
+    "dataset_dir": "/data/tianxing/PycharmProjects/datasets/voicemail",
+    "start_count": 0,
+    "increase_count": 5000
+}
