@@ -3,15 +3,15 @@
     "tasks": [
         {
             "language": "es-MX",
-            "start_count": 0
+            "start_count": 9000
         },
         {
             "language": "es-PE",
-            "start_count": 0
+            "start_count": 5000
         },
         {
             "language": "en-PH",
-            "start_count": 0
+            "start_count": 7000
         },
         {
             "language": "en-SG",
@@ -19,22 +19,26 @@
         },
         {
             "language": "en-US",
-            "start_count": 0
+            "start_count": 13000
         },
         {
             "language": "id-ID",
-            "start_count": 0
+            "start_count": 9000
         },
         {
             "language": "ja-JP",
-            "start_count": 0
+            "start_count": 14000
         },
         {
             "language": "ko-KR",
-            "start_count": 0
+            "start_count": 5000
         },
         {
             "language": "ms-MY",
+            "start_count": 5000
+        },
+        {
+            "language": "pt-BR",
             "start_count": 0
         },
         {
@@ -43,7 +47,7 @@
         },
         {
             "language": "zh-TW",
-            "start_count": 0
+            "start_count": 20000
         }
     ]
 }

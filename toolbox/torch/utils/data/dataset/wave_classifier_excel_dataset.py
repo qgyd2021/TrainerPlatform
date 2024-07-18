@@ -85,6 +85,8 @@ class WaveClassifierExcelDataset(Dataset):
             raise AssertionError
 
         waveform = torch.tensor(waveform, dtype=torch.float32)
+        first = int(2 * self.expected_sample_rate)
+        waveform = waveform[:first]
         return waveform
 
 
