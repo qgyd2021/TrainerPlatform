@@ -3,7 +3,7 @@
     "tasks": [
         {
             "language": "es-MX",
-            "start_count": 9000
+            "start_count": 11000
         },
         {
             "language": "es-PE",
@@ -35,7 +35,7 @@
         },
         {
             "language": "ms-MY",
-            "start_count": 5000
+            "start_count": 8000
         },
         {
             "language": "pt-BR",
