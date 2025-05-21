@@ -79,7 +79,7 @@ settings.scheduler.add_job(
     trigger='cron',
     day_of_week='0-6',
     hour=3,
-    next_run_time=datetime.now() + timedelta(seconds=5)
+    # next_run_time=datetime.now() + timedelta(seconds=5)
 )
 # run on 04:00:00 each day.
 settings.scheduler.add_job(

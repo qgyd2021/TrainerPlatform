@@ -36,7 +36,7 @@ done
 
 
 if [ $system_version == "centos" ]; then
-  python_version=3.6.5
+  python_version=3.9.9
 
   cd "${work_dir}" || exit 1;
   sh ./script/install_python.sh --system_version "centos" --python_version "${python_version}"
