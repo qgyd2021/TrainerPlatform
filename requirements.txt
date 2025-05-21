@@ -18,6 +18,4 @@ ipadic
 Flask-APScheduler
 pytorch-pretrained-bert
 scikit-learn
-faiss-cpu
-matplotlib
 opencv-contrib-python
